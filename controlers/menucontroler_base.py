@@ -35,30 +35,28 @@ class MenuControler(Controler):
             
         pos = first
         if pos == self.current:
-            self.lcd.setLine1('=> ' + self.options[pos][0])
+            self.lcd.setLine2('=> ' + self.options[pos][0])
         else:
-            self.lcd.setLine1(self.options[pos][0])
+            self.lcd.setLine2(self.options[pos][0])
         
         pos = pos +1
         if pos < len(self.options):
             if pos == self.current:
-                self.lcd.setLine2('=> ' + self.options[pos][0])
+                self.lcd.setLine3('=> ' + self.options[pos][0])
             else:
-                self.lcd.setLine2(self.options[pos][0])
+                self.lcd.setLine3(self.options[pos][0])
             
             pos = pos +1
             if pos < len(self.options):
-                self.lcd.setLine3(self.options[pos][0])
+                self.lcd.setLine4(self.options[pos][0])
                 
                 pos = pos +1
                 if pos < len(self.options):
                     self.lcd.setLine4(self.options[pos][0])
             else:
-                self.lcd.setLine3('') 
                 self.lcd.setLine4('') 
                 
         else:
-            self.lcd.setLine2('') 
             self.lcd.setLine3('') 
             self.lcd.setLine4('') 
                         

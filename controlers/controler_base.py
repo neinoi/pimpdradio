@@ -16,18 +16,23 @@ import os
 import time
 from mpd import MPDClient
 
+MAX_VOLUME = 80
+
 class Controler:
 
     lcd = None
     mpd = None
     rootControler = None
-    
+    previousControler = None
+    currentVolume = None
+        
     mpc = "/usr/bin/mpc"	# Music Player Client
 
-    def __init__(self, lcd, mpd, rootControler):
+    def __init__(self, lcd, mpd, rootControler, previousControler=None):
         self.lcd = lcd
         self.mpd = mpd
         self.rootControler = rootControler
+        self.previousControler = previousControler
         return
 
     # Execute MPC comnmand using mpd library - Connect client if required
@@ -84,16 +89,47 @@ class Controler:
     def tunerClickUp(self):
         raise NotImplementedError( "Should have implemented this" )
 
+    def getVolume(self, refresh=False):
+        if self.currentVolume is None or refresh is True:
+            volume = 0
+            try:
+                stats = self.mpd.status()
+                volume = int(stats.get("volume"))
+            except:
+                volume = 0
+    
+            if volume == str("None"):
+                volume = 0
+            
+            if volume > MAX_VOLUME:
+                volume = MAX_VOLUME
+            
+            self.currentVolume = volume
+        
+        return self.currentVolume
+
     def volumeUp(self):
-        raise NotImplementedError( "Should have implemented this" )
+        self.setVolume(self.getVolume() + 5)
+        return
     
     def volumeDown(self):
-        raise NotImplementedError( "Should have implemented this" )
+        self.setVolume(self.getVolume() - 5)
+        return
     
     def volumeClickDown(self):
         raise NotImplementedError( "Should have implemented this" )
 
     def volumeClickUp(self):
         raise NotImplementedError( "Should have implemented this" )
+
+        
+    def setVolume(self,volume):
+        if volume > MAX_VOLUME:
+            volume = MAX_VOLUME
+        elif volume < 0:
+            volume = 0
+        self.currentVolume = volume
+        
+        self.execMpc(self.mpd.setvol(volume))
 
 # End of MainControler class

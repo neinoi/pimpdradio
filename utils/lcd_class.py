@@ -78,6 +78,10 @@ LCD_LINE_4 = 0xD4 # LCD RAM address for the 4th line
 E_PULSE = 0.00005
 E_DELAY = 0.00005
 
+POSITION_LEFT = 'left'
+POSITION_CENTER = 'center'
+POSITION_RIGHT = 'right'
+
 def interrupt():
     return False
 
@@ -134,37 +138,49 @@ class Lcd:
         return
 
 
-    def setLine1(self,text):
-        self.new_line1 = text
+    def setLine1(self,text,position=POSITION_LEFT):
+        self.new_line1 = self._formatText(text, position)
         self.lcd_p1 = 0
         
         #self._refresh()
         return
 
 
-    def setLine2(self,text):
-        self.new_line2 = text
+    def setLine2(self,text,position=POSITION_LEFT):
+        self.new_line2 = self._formatText(text, position)
         self.lcd_p2 = 0
         
         #self._refresh()
         return
 
 
-    def setLine3(self,text):
-        self.new_line3 = text
+    def setLine3(self,text,position=POSITION_LEFT):
+        self.new_line3 = self._formatText(text, position)
         self.lcd_p3 = 0
         
         #self._refresh()
         return
 
 
-    def setLine4(self,text):
-        self.new_line4 = text
+    def setLine4(self,text,position=POSITION_LEFT):
+        self.new_line4 = self._formatText(text, position)
         self.lcd_p4 = 0
         
         #self._refresh()
         return
 
+
+    def _formatText(self, text, position):
+        ret = text
+        if position == POSITION_CENTER:
+            while len(ret) < 20:
+                ret = ret + ' '
+                if len(ret) < 20:
+                    ret = ' ' + ret
+        elif position == POSITION_RIGHT:
+            while len(ret) < 20:
+                ret = ' ' + ret
+        return ret
 
     def _refresh(self,tempo = 0.5):
         #         if timerRefresh is not None:
@@ -214,7 +230,9 @@ class Lcd:
 
     def _affLine(self,lcd_line,text,pos):
         ret = pos
-
+        if text is None:
+            text = ''
+            
         if len(text) > 0 and len(text) <= self.width:
             if pos==0:
                 ret = -2

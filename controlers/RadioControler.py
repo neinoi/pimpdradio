@@ -10,9 +10,7 @@ Created on 4 janv. 2015
 import os
 
 from menucontroler_base import MenuControler
-#from pimpdradio.utils.translate_class import Translate
-
-#translate = Translate()
+from RadioDisplay import RadioDisplay
 
 class RadioControler(MenuControler):
     '''
@@ -28,6 +26,7 @@ class RadioControler(MenuControler):
 
     def choixRadio(self, numRadio):
         self.execMpc(self.mpd.play(numRadio))
+        self.rootControler.setControler(RadioDisplay(self.playlist[numRadio][0], self.lcd, self.mpd, self.rootControler, self))
         
     # Load radio stations
     def loadStations(self):
