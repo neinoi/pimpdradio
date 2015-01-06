@@ -11,3 +11,5 @@ Goals :
 
 Current :
  - Only 20x4 Lcd display
+ - Only radio
+ - Stability problems

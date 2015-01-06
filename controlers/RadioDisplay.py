@@ -26,4 +26,12 @@ class RadioDisplay(Controler):
         return
     
     def refresh(self):
+        curT = self.getCurrentTitle()
+
+        spl = curT.split(' - ', 1)
+        self.lcd.setLine3(spl[0],'center')
+        
+        if len(spl) > 1:
+            self.lcd.setLine4(spl[1],'center')
+
         return

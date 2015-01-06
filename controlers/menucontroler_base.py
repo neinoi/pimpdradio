@@ -81,5 +81,5 @@ class MenuControler(Controler):
         self.options[self.current][1](self.options[self.current][2])
         
     def refresh(self):
-        self.lcd.clear()
+        #self.lcd.clear()
         self._affOptions()

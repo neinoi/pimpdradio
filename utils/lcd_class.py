@@ -171,15 +171,11 @@ class Lcd:
 
 
     def _formatText(self, text, position):
-        ret = text
+        ret = text.strip(' ');
         if position == POSITION_CENTER:
-            while len(ret) < 20:
-                ret = ret + ' '
-                if len(ret) < 20:
-                    ret = ' ' + ret
+            ret = ret.center(LCD_WIDTH, ' ')
         elif position == POSITION_RIGHT:
-            while len(ret) < 20:
-                ret = ' ' + ret
+            ret = ret.rjust(LCD_WIDTH, ' ')
         return ret
 
     def _refresh(self,tempo = 0.5):

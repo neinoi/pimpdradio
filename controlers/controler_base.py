@@ -89,8 +89,8 @@ class Controler:
     def tunerClickUp(self):
         raise NotImplementedError( "Should have implemented this" )
 
-    def getVolume(self, refresh=False):
-        if self.currentVolume is None or refresh is True:
+    def getVolume(self):
+        if self.currentVolume is None or self.currentVolume == 0:
             volume = 0
             try:
                 stats = self.mpd.status()
@@ -100,9 +100,6 @@ class Controler:
     
             if volume == str("None"):
                 volume = 0
-            
-            if volume > MAX_VOLUME:
-                volume = MAX_VOLUME
             
             self.currentVolume = volume
         
@@ -132,4 +129,43 @@ class Controler:
         
         self.execMpc(self.mpd.setvol(volume))
 
+
+    # Get current song information (Only for use within this module)
+    def getCurrentSong(self):
+        currentsong = ''
+        try:
+            currentsong = self.execMpc(self.mpd.currentsong())
+        except:
+            # Try re-connect and status
+            try:
+                if self.connect(self.mpdport):
+                    currentsong = self.execMpc(self.mpd.currentsong())
+            except:
+                pass
+        return currentsong
+
+    # Get the title of the currently playing station or track from mpd 
+    def getCurrentTitle(self):
+        try:
+            currentsong = self.getCurrentSong()
+            title = str(currentsong.get("title"))
+        except:
+            title = ''
+
+        if title == 'None':
+            title = ''
+
+        try:
+            genre = str(currentsong.get("genre"))
+        except:
+            genre = ''
+        if genre == 'None':
+            genre = ''
+
+        if title == '':
+            # Usually used if this is a podcast
+            if len(genre) > 0:
+                title = genre    
+
+        return title
 # End of MainControler class

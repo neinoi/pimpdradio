@@ -14,7 +14,7 @@
 
 import threading
 
-from time import gmtime, strftime
+from time import localtime, strftime
 
 from controlers.controler_base import Controler
 from controlers.MenuPrincipal import MenuPrincipal
@@ -69,15 +69,12 @@ class MainControler(Controler):
 
     #On rafraîchit uniquement la première ligne (Date/Heure et Volume)
     def _refresh(self,tempo = 1):
-        volume = self.getVolume(True)
+        volume = self.getVolume()
         
-        ligneDeb = strftime("%d/%m %H:%M", gmtime())
-        ligneFin = "Vol " + str(volume)
-        
-        while len(ligneDeb) + len(ligneFin) < 20:
-            ligneDeb += ' '
+        ligne = strftime("%d/%m %H:%M   Vol " + str(volume), localtime())
             
-        self.lcd.setLine1(ligneDeb + ligneFin)
+        self.lcd.setLine1(ligne)
+        self.currentControler.refresh()
         
         threading.Timer(tempo, self._refresh, [tempo]).start()
         
