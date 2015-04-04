@@ -28,6 +28,7 @@
 import threading
 import time
 import RPi.GPIO as GPIO
+from pimpdradio.display.ScreenBase import ScreenBase, MODE_MENU, MODE_MUSIC
 
 
 # The wiring for the LCD is as follows:
@@ -86,7 +87,8 @@ def interrupt():
     return False
 
 # Lcd Class
-class Lcd:
+class Lcd(ScreenBase):
+    
     width = LCD_WIDTH
     # If display can support umlauts set to True else False
     displayUmlauts = True
@@ -100,14 +102,10 @@ class Lcd:
 
     timerRefresh = None
 
-    def __init__(self):
-        return
-
-    # Initialise for either revision 1 or 2 boards
-    def init(self,revision,tempo = 0.5):
+    # Initialise for revision 2 boards
+    def init(self):
         # LED outputs
-        if revision == 1:
-            self.lcd_d4 = LCD_D4_21
+        ScreenBase.__init__(self)
 
         GPIO.setwarnings(False)            # Disable warnings
         GPIO.setmode(GPIO.BCM)            # Use BCM GPIO numbers
@@ -126,11 +124,34 @@ class Lcd:
         self._byte_out(0x01,LCD_CMD)
         time.sleep(1)
 
-        self.timerRefresh = threading.Timer(tempo, self._refresh, [tempo])
+        self.timerRefresh = threading.Timer(0.5, self._refresh, 0.5)
         self.timerRefresh.start()
 
         return
 
+    def refreshDisplay(self):
+        if self.mode == MODE_MENU:
+            #Ici on affiche le menu sur les 3 lignes du bas
+            
+            pos = self.menu_current -1
+            if pos < 0:
+                pos = 0
+            
+            for i in range(2,4):
+                    
+            if self.menu_current == 0:
+                self.setLine2(">> " + self.options[self.menu_current][0])
+            else:
+                self.setLine2(">> " + self.options[self.menu_current -1][0])
+            
+            if len(self.options) > 2:
+                
+            
+            
+        elif self.mode == MODE_RADIO:
+            
+        elif self.mode == MODE_MUSIC:
+            
 
     # Set the display width
     def setWidth(self,width):

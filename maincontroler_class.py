@@ -25,10 +25,10 @@ class MainControler(Controler):
     currentControler = None
     timerRefresh = None
 
-    def __init__(self, lcd, mpd):
-        Controler.__init__(self, lcd, mpd, None)
+    def __init__(self, config, lcd, mpd):
+        Controler.__init__(self, config, lcd, mpd, None)
 
-        self.currentControler = MenuPrincipal(lcd, mpd, self)
+        self.currentControler = MenuPrincipal(config, lcd, mpd, self)
 
         threading.Timer(1, self._refresh, [1]).start()
 

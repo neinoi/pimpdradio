@@ -16,19 +16,17 @@ import os
 import time
 from mpd import MPDClient
 
-MAX_VOLUME = 80
-
 class Controler:
 
     lcd = None
     mpd = None
+    config = None
     rootControler = None
     previousControler = None
     currentVolume = None
         
-    mpc = "/usr/bin/mpc"	# Music Player Client
-
-    def __init__(self, lcd, mpd, rootControler, previousControler=None):
+    def __init__(self, config, lcd, mpd, rootControler, previousControler=None):
+        self.config = config
         self.lcd = lcd
         self.mpd = mpd
         self.rootControler = rootControler
@@ -121,8 +119,8 @@ class Controler:
 
         
     def setVolume(self,volume):
-        if volume > MAX_VOLUME:
-            volume = MAX_VOLUME
+        if volume > self.config.getMaxVolume():
+            volume = self.config.getMaxVolume()
         elif volume < 0:
             volume = 0
         self.currentVolume = volume

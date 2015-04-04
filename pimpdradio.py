@@ -28,7 +28,8 @@ import time
 
 # Class imports
 from utils.radio_daemon import Daemon
-from utils.lcd_class import Lcd
+from pimpdradio.display.lcd_class import Lcd
+from utils.config_class import Config
 from mpd import MPDClient
 
 # import gaugette.rotary_encoder
@@ -38,37 +39,21 @@ from mpd import MPDClient
 from encoders.rotary_class import RotaryEncoder
 from maincontroler_class import MainControler
 
-# Switch definitions (Bob)
-MENU_UP = 17
-MENU_DOWN = 18
-MENU_SWITCH = 25
+config = Config('/etc/pimpdradio.cfg')
 
-VOLUME_UP = 15
-VOLUME_DOWN = 14
-VOLUME_SWITCH = 4
-
-# With Gaugette :
-# MENU_SWITCH = 6
-# MENU_UP = 0
-# MENU_DOWN = 1
-# VOLUME_SWITCH = 7
-# VOLUME_UP = 16
-# VOLUME_DOWN = 15
-
-revision = 2
 tempo = 0.2
 
 lcd = Lcd()
 mpd = MPDClient()    # Create the MPD client
-mpd.connect("localhost", 6600)  # connect to localhost:6600
+mpd.connect(config.getMpdHost(), config.getMpdPort())  # connect to localhost:6600
 
-lcd.init(revision, tempo)
-lcd.setWidth(20)
+lcd.init(config.getBoardRevision(), tempo)
+lcd.setWidth(config.getLcdWidth())
 
-controler = MainControler(lcd, mpd)
-volumeknob = RotaryEncoder(VOLUME_UP, VOLUME_DOWN, VOLUME_SWITCH,
+controler = MainControler(config, lcd, mpd)
+volumeknob = RotaryEncoder(config.getSwitchVolumeUp(), config.getSwitchVolumeDown(), config.getSwitchVolumeButton(),
                            controler.volume_event)
-tunerknob = RotaryEncoder(MENU_UP, MENU_DOWN, MENU_SWITCH,
+tunerknob = RotaryEncoder(config.getSwitchMenuUp(), config.getSwitchMenuDown(), config.getSwitchMenuButton(),
                           controler.tuner_event)
 
 

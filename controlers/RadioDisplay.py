@@ -11,8 +11,8 @@ from controler_base import Controler
 
 class RadioDisplay(Controler):
 
-    def __init__(self, nomRadio, lcd, mpd, rootControler, previousControler):
-        Controler.__init__(self, lcd, mpd, rootControler, previousControler)
+    def __init__(self, nomRadio, config, lcd, mpd, rootControler, previousControler):
+        Controler.__init__(self, config, lcd, mpd, rootControler, previousControler)
         self.lcd.setLine2(nomRadio,'center')
         self.lcd.setLine3('')
         self.lcd.setLine4('')

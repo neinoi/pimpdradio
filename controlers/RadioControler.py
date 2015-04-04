@@ -18,21 +18,21 @@ class RadioControler(MenuControler):
     '''
     playlist = []
     
-    def __init__(self, lcd, mpd, rootControler):
+    def __init__(self, config, lcd, mpd, rootControler):
         self.mpd = mpd
         self.loadStations()
-        MenuControler.__init__(self, lcd, mpd, rootControler, self.playlist)
+        MenuControler.__init__(self, config, lcd, mpd, rootControler, self.playlist)
         
 
     def choixRadio(self, numRadio):
         self.execMpc(self.mpd.play(numRadio))
-        self.rootControler.setControler(RadioDisplay(self.playlist[numRadio][0], self.lcd, self.mpd, self.rootControler, self))
+        self.rootControler.setControler(RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd, self.mpd, self.rootControler, self))
         
     # Load radio stations
     def loadStations(self):
         self.execMpc(self.mpd.clear())
 
-        dirList = os.listdir("/var/lib/mpd/playlists")
+        dirList = os.listdir(self.config.getPlaylistsDir())
         for fname in dirList:
             #cmd = "load \"" + fname.strip("\n") + "\""
 

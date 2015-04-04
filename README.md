@@ -8,6 +8,7 @@ Forked from Bob Rathbone work : https://github.com/bobrathbone/piradio
 Goals : 
  - Working with Mpd's database rather than file system (For huge collections)
  - Working with color lcd display (like Adafruit's http://www.adafruit.com/products/1480)
+ - Adding support for 
 
 Current :
  - Only 20x4 Lcd display

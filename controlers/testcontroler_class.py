@@ -65,7 +65,7 @@ class MainControler(Controler):
 
         dirList = os.listdir("/var/lib/mpd/playlists")
         for fname in dirList:
-            cmd = "load \"" + fname.strip("\n") + "\""
+            #cmd = "load \"" + fname.strip("\n") + "\""
 
             fname = fname.strip("\n")
             try:
@@ -83,7 +83,7 @@ class MainControler(Controler):
 
     # Create list of tracks or stations
     def createPlayList(self):
-        list = []
+        plist = []
         line = ""
         cmd = "playlist"
         p = os.popen(self.mpc + " " + cmd)
@@ -92,8 +92,8 @@ class MainControler(Controler):
             if line.__len__() < 1:
                 break
             line = translate.escape(line)
-            list.append(line)
-        self.playlist = list
+            plist.append(line)
+        self.playlist = plist
         return self.playlist
 
 # End of MainControler class
