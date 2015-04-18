@@ -24,14 +24,13 @@ class Controler:
     rootControler = None
     previousControler = None
     currentVolume = None
-        
+            
     def __init__(self, config, lcd, mpd, rootControler, previousControler=None):
         self.config = config
         self.lcd = lcd
         self.mpd = mpd
         self.rootControler = rootControler
-        self.previousControler = previousControler
-        return
+        self.previousControler = previousControler        
 
     # Execute MPC comnmand using mpd library - Connect client if required
     def execMpc(self, cmd):
@@ -71,23 +70,23 @@ class Controler:
     def execCommand(self,cmd):
         p = os.popen(cmd)
         return  p.readline().rstrip('\n')
-    
+
     def refresh(self):
-        raise NotImplementedError( "Should have implemented this" )
+        print "refresh NotImplementedError"
 
     def tunerUp(self):
-        raise NotImplementedError( "Should have implemented this" )
+        print "tunerUp NotImplementedError"
     
     def tunerDown(self):
-        raise NotImplementedError( "Should have implemented this" )
+        print "tunerDown NotImplementedError"
     
     def tunerClickDown(self):
-        raise NotImplementedError( "Should have implemented this" )
+        print "tunerClickDown NotImplementedError"
     
     def tunerClickUp(self):
-        raise NotImplementedError( "Should have implemented this" )
+        print "tunerClickUp NotImplementedError"
 
-    def getVolume(self):
+    def getVolume(self, refresh = False):
         if self.currentVolume is None or self.currentVolume == 0:
             volume = 0
             try:
@@ -105,18 +104,15 @@ class Controler:
 
     def volumeUp(self):
         self.setVolume(self.getVolume() + 5)
-        return
     
     def volumeDown(self):
         self.setVolume(self.getVolume() - 5)
-        return
     
     def volumeClickDown(self):
-        raise NotImplementedError( "Should have implemented this" )
+        print "columeClickDown NotImplementedError"
 
     def volumeClickUp(self):
-        raise NotImplementedError( "Should have implemented this" )
-
+        print "volumeClickUp NotImplementedError"
         
     def setVolume(self,volume):
         if volume > self.config.getMaxVolume():
@@ -126,7 +122,7 @@ class Controler:
         self.currentVolume = volume
         
         self.execMpc(self.mpd.setvol(volume))
-
+        self.lcd.setVolume(volume)
 
     # Get current song information (Only for use within this module)
     def getCurrentSong(self):

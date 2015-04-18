@@ -28,15 +28,13 @@ import time
 
 # Class imports
 from utils.radio_daemon import Daemon
-from pimpdradio.display.lcd_class import Lcd
+from display.lcd_class import Lcd
 from utils.config_class import Config
 from mpd import MPDClient
 
-# import gaugette.rotary_encoder
-# import gaugette.switch
-#from gaugette_class import RotaryEncoder
+from encoders.gaugette_class import RotaryEncoder
+#from encoders.rotary_class import RotaryEncoder
 
-from encoders.rotary_class import RotaryEncoder
 from maincontroler_class import MainControler
 
 config = Config('/etc/pimpdradio.cfg')
@@ -47,15 +45,24 @@ lcd = Lcd()
 mpd = MPDClient()    # Create the MPD client
 mpd.connect(config.getMpdHost(), config.getMpdPort())  # connect to localhost:6600
 
-lcd.init(config.getBoardRevision(), tempo)
+#lcd.init(config.getBoardRevision(), tempo)
+lcd.init()
 lcd.setWidth(config.getLcdWidth())
 
+print 'Initializing main controller ...'
 controler = MainControler(config, lcd, mpd)
-volumeknob = RotaryEncoder(config.getSwitchVolumeUp(), config.getSwitchVolumeDown(), config.getSwitchVolumeButton(),
-                           controler.volume_event)
+time.sleep(5)
+
+print 'Initializing tuner controls ...'
 tunerknob = RotaryEncoder(config.getSwitchMenuUp(), config.getSwitchMenuDown(), config.getSwitchMenuButton(),
                           controler.tuner_event)
+time.sleep(5)
 
+print 'Initializing volume controls ...'
+volumeknob = RotaryEncoder(config.getSwitchVolumeUp(), config.getSwitchVolumeDown(), config.getSwitchVolumeButton(),
+                           controler.volume_event)
+time.sleep(5)
+controler.setReady(True)
 
 # Signal SIGTERM handler
 def signalHandler(signal, frame):

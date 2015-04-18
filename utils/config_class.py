@@ -54,4 +54,4 @@ class Config(object):
         return self.config.getint("LCD", "WIDTH")
     
     def getPlaylistsDir(self):
-        return self.config.getstring("FILES", "PLAYLISTS")
+        return self.config.get("FILES", "PLAYLISTS")

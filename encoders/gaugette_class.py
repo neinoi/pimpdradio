@@ -18,14 +18,12 @@
 from encoder_class import Encoder
 
 import threading
-import pimpdradio.gaugette.rotary_encoder
-import pimpdradio.gaugette.switch
+import gaugette.rotary_encoder
+import gaugette.switch
 
-TEMPO = 0.1
+TEMPO = 0.15
 
 class RotaryEncoder(Encoder):
-
-    TEMPO = 0.1
 
     last_state = None
     callback = None
@@ -37,9 +35,9 @@ class RotaryEncoder(Encoder):
     def __init__(self,pinUp,pinDown,pinSwitch,callback):
         self.callback = callback
 
-        self.rotary = pimpdradio.gaugette.rotary_encoder.RotaryEncoder.Worker(pinUp, pinDown)
+        self.rotary = gaugette.rotary_encoder.RotaryEncoder.Worker(pinUp, pinDown)
         self.rotary.start()
-        self.switch = pimpdradio.gaugette.switch.Switch(pinSwitch)
+        self.switch = gaugette.switch.Switch(pinSwitch)
 
         threading.Timer(TEMPO, self._test).start()
 
@@ -48,13 +46,13 @@ class RotaryEncoder(Encoder):
 
     def _test(self):
         #rotary test
+        event = self.NONE
         delta = self.rotary.get_delta()
         if delta!=0:
             if delta > 0:
                 event = self.CLOCKWISE
             else:
                 event = self.ANTICLOCKWISE
-            self.callback(event)
 
         #button test
         sw_state = self.switch.get_state()
@@ -63,8 +61,10 @@ class RotaryEncoder(Encoder):
                 event = self.BUTTONUP
             else:
                 event = self.BUTTONDOWN
-            self.callback(event)
             self.last_state = sw_state
+
+        if event != self.NONE:
+            self.callback(event)
 
         threading.Timer(TEMPO, self._test).start()
         return

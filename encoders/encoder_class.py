@@ -17,6 +17,7 @@
 
 class Encoder:
 
+	NONE=-1
 	CLOCKWISE=1
 	ANTICLOCKWISE=2
 	BUTTONDOWN=3

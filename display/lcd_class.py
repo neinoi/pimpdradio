@@ -27,8 +27,10 @@
 
 import threading
 import time
+from time import localtime, strftime
+
 import RPi.GPIO as GPIO
-from pimpdradio.display.ScreenBase import ScreenBase, MODE_MENU, MODE_MUSIC
+from display.ScreenBase import ScreenBase
 
 
 # The wiring for the LCD is as follows:
@@ -101,6 +103,7 @@ class Lcd(ScreenBase):
     new_line1 = new_line2 = new_line3 = new_line4 = ""
 
     timerRefresh = None
+    timerLine1 = None
 
     # Initialise for revision 2 boards
     def init(self):
@@ -124,34 +127,38 @@ class Lcd(ScreenBase):
         self._byte_out(0x01,LCD_CMD)
         time.sleep(1)
 
-        self.timerRefresh = threading.Timer(0.5, self._refresh, 0.5)
+        self.timerRefresh = threading.Timer(0.5, self._refresh, [0.3])
         self.timerRefresh.start()
+
+        self.timerLine1 = threading.Timer(60.0, self._refreshLine1, [60.0])
+        self.timerLine1.start()
+
 
         return
 
     def refreshDisplay(self):
-        if self.mode == MODE_MENU:
+        if self.mode == self.MODE_MENU:
             #Ici on affiche le menu sur les 3 lignes du bas
             
-            pos = self.menu_current -1
-            if pos < 0:
-                pos = 0
+            #pos = self.menu_current -1
+            #if pos < 0:
+            #    pos = 0
             
-            for i in range(2,4):
+            #for i in range(2,4):
                     
-            if self.menu_current == 0:
-                self.setLine2(">> " + self.options[self.menu_current][0])
-            else:
-                self.setLine2(">> " + self.options[self.menu_current -1][0])
+            #if self.menu_current == 0:
+            #    self.setLine2(">> " + self.options[self.menu_current][0])
+            #else:
+            #    self.setLine2(">> " + self.options[self.menu_current -1][0])
             
-            if len(self.options) > 2:
-                
+            #if len(self.options) > 2:
+            pass   
             
             
-        elif self.mode == MODE_RADIO:
-            
-        elif self.mode == MODE_MUSIC:
-            
+        elif self.mode == self.MODE_RADIO:
+            pass
+        elif self.mode == self.MODE_MUSIC:
+            pass
 
     # Set the display width
     def setWidth(self,width):
@@ -160,35 +167,35 @@ class Lcd(ScreenBase):
 
 
     def setLine1(self,text,position=POSITION_LEFT):
+        #print "line1 : {0}".format(text)
         self.new_line1 = self._formatText(text, position)
         self.lcd_p1 = 0
         
         #self._refresh()
-        return
 
 
     def setLine2(self,text,position=POSITION_LEFT):
+        #print "line2 : {0}".format(text)
         self.new_line2 = self._formatText(text, position)
         self.lcd_p2 = 0
         
         #self._refresh()
-        return
 
 
     def setLine3(self,text,position=POSITION_LEFT):
+        #print "line3 : {0}".format(text)
         self.new_line3 = self._formatText(text, position)
         self.lcd_p3 = 0
         
         #self._refresh()
-        return
 
 
     def setLine4(self,text,position=POSITION_LEFT):
+        #print "line4 : {0}".format(text)
         self.new_line4 = self._formatText(text, position)
         self.lcd_p4 = 0
         
         #self._refresh()
-        return
 
 
     def _formatText(self, text, position):
@@ -198,6 +205,17 @@ class Lcd(ScreenBase):
         elif position == POSITION_RIGHT:
             ret = ret.rjust(LCD_WIDTH, ' ')
         return ret
+
+    def setVolume(self,volume):
+        self.volume = volume
+        ligne = strftime("%d/%m %H:%M   Vol " + str(volume), localtime())
+        self.setLine1(ligne)
+
+    def _refreshLine1(self,tempo = 60.0):
+        ligne = strftime("%d/%m %H:%M   Vol " + str(self.volume), localtime())
+        self.setLine1(ligne)
+        self.timerLine1 = threading.Timer(60.0, self._refreshLine1, [60.0])
+        self.timerLine1.start()
 
     def _refresh(self,tempo = 0.5):
         #         if timerRefresh is not None:

@@ -12,9 +12,6 @@
 # The authors shall not be liable for any loss or damage however caused.
 #
 
-import threading
-
-from time import localtime, strftime
 
 from controlers.controler_base import Controler
 from controlers.MenuPrincipal import MenuPrincipal
@@ -24,60 +21,43 @@ class MainControler(Controler):
 
     currentControler = None
     timerRefresh = None
+    ready = False
 
     def __init__(self, config, lcd, mpd):
         Controler.__init__(self, config, lcd, mpd, None)
 
         self.currentControler = MenuPrincipal(config, lcd, mpd, self)
-
-        threading.Timer(1, self._refresh, [1]).start()
-
-        return
+        lcd.setVolume(self.getVolume())
 
     # This is the callback routine to handle tuner events
     def tuner_event(self, event):
-        if event == Encoder.CLOCKWISE:
-            self.currentControler.tunerUp()
-        elif event == Encoder.ANTICLOCKWISE:
-            self.currentControler.tunerDown()
-        elif event == Encoder.BUTTONUP:
-            self.currentControler.tunerClickUp()
-        elif event == Encoder.BUTTONDOWN:
-            self.currentControler.tunerClickDown()
-        
-        return
+        if self.ready:
+            if event == Encoder.CLOCKWISE:
+                self.currentControler.tunerUp()
+            elif event == Encoder.ANTICLOCKWISE:
+                self.currentControler.tunerDown()
+            elif event == Encoder.BUTTONUP:
+                self.currentControler.tunerClickUp()
+            elif event == Encoder.BUTTONDOWN:
+                self.currentControler.tunerClickDown()
 
     # This is the callback routine to handle volume events
     def volume_event(self, event):
-        if event == Encoder.CLOCKWISE:
-            self.currentControler.volumeUp()
-        elif event == Encoder.ANTICLOCKWISE:
-            self.currentControler.volumeDown()
-        elif event == Encoder.BUTTONUP:
-            self.currentControler.volumeClickUp()
-        elif event == Encoder.BUTTONDOWN:
-            self.currentControler.volumeClickDown()
-
-        return
+        if self.ready:
+            if event == Encoder.CLOCKWISE:
+                self.currentControler.volumeUp()
+            elif event == Encoder.ANTICLOCKWISE:
+                self.currentControler.volumeDown()
+            elif event == Encoder.BUTTONUP:
+                self.currentControler.volumeClickUp()
+            elif event == Encoder.BUTTONDOWN:
+                self.currentControler.volumeClickDown()
 
     def setControler(self, newControler):
         self.currentControler = newControler
         self.currentControler.refresh()
-
-        return
-
-
-    #On rafraîchit uniquement la première ligne (Date/Heure et Volume)
-    def _refresh(self,tempo = 1):
-        volume = self.getVolume()
         
-        ligne = strftime("%d/%m %H:%M   Vol " + str(volume), localtime())
-            
-        self.lcd.setLine1(ligne)
-        self.currentControler.refresh()
-        
-        threading.Timer(tempo, self._refresh, [tempo]).start()
-        
-        return
+    def setReady(self, isReady):
+        self.ready = isReady
         
 # End of MainControler class

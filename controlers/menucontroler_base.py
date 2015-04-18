@@ -17,9 +17,9 @@ class MenuControler(Controler):
     #Tableau de tuples (ligne à afficher,fonction à lancer,paramètres)
     options = []
 
-    def __init__(self, lcd, mpd, rootControler, options):
-        Controler.__init__(self, lcd, mpd, rootControler)
-
+    def __init__(self, config, lcd, mpd, rootControler, options):
+        Controler.__init__(self, config, lcd, mpd, rootControler)
+        
         self.options = options
         self.current = 0
         
@@ -49,10 +49,6 @@ class MenuControler(Controler):
             pos = pos +1
             if pos < len(self.options):
                 self.lcd.setLine4(self.options[pos][0])
-                
-                pos = pos +1
-                if pos < len(self.options):
-                    self.lcd.setLine4(self.options[pos][0])
             else:
                 self.lcd.setLine4('') 
                 
