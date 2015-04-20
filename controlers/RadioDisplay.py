@@ -16,9 +16,13 @@ class RadioDisplay(Controler):
     timerRefresh = None
     timerContinue = True
     
+    radioName = ''
+    radioTitle = ''
+    
     def __init__(self, nomRadio, config, lcd, mpd, rootControler, previousControler):
         Controler.__init__(self, config, lcd, mpd, rootControler, previousControler)
         self.lcd.setLine2(nomRadio,'center')
+        self.radioName = self.mpd.currentsong()['name']
         self.lcd.setLine3('','center')
         self.lcd.setLine4('','center')
 
@@ -38,16 +42,29 @@ class RadioDisplay(Controler):
         self.rootControler.setControler(self.previousControler)
     
     def refresh(self):
+
+        try:
+            curN = self.mpd.currentsong()['name']
+            if curN != self.radioName:
+                self.radioName = curN
+                
+                self.lcd.setLine2(curN[:20])
+        except:
+            pass    
+
         try:
             curT = self.mpd.currentsong()['title']
-
-            spl = curT.split(' - ', 1)
-            self.lcd.setLine3(spl[0],'center')
-        
-            if len(spl) > 1:
-                self.lcd.setLine4(spl[1],'center')
+            if curT != self.radioTitle:
+                self.radioTitle = curT
+                spl = curT.split(' - ', 1)
+                self.lcd.setLine3(spl[0],'center')
+            
+                if len(spl) > 1:
+                    self.lcd.setLine4(spl[1],'center')
+                else:
+                    self.lcd.setLine4('')
         except:
-            pass
+            pass    
 
     def _refresh(self,tempo = 1):
         if self.timerContinue:

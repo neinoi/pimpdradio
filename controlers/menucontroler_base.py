@@ -30,8 +30,11 @@ class MenuControler(Controler):
     
     def _affOptions(self):
         first = self.current -1
+        if first+3 > len(self.options):
+            first -= 1
         if first < 0:
             first = 0
+ 
             
         pos = first
         if pos == self.current:
@@ -48,7 +51,10 @@ class MenuControler(Controler):
             
             pos = pos +1
             if pos < len(self.options):
-                self.lcd.setLine4(self.options[pos][0])
+                if pos == self.current:
+                    self.lcd.setLine4('=> ' + self.options[pos][0])
+                else:
+                    self.lcd.setLine4(self.options[pos][0])
             else:
                 self.lcd.setLine4('') 
                 
