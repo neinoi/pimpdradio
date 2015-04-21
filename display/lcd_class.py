@@ -20,8 +20,9 @@
 #
 # License: GNU V3, See https://www.gnu.org/copyleft/gpl.html
 #
-# Disclaimer: Software is provided as is and absolutly no warranties are implied or given.
-#             The authors shall not be liable for any loss or damage however caused.
+# Disclaimer: Software is provided as is and absolutly no warranties
+#             are implied or given. The authors shall not be liable for any
+#             loss or damage however caused.
 #
 
 
@@ -53,7 +54,7 @@ from display.ScreenBase import ScreenBase
 
 # Define GPIO to LCD mapping
 LCD_RS = 7
-LCD_E  = 8
+LCD_E = 8
 LCD_D4_21 = 21    # Rev 1 Board
 LCD_D4_27 = 27    # Rev 2 Board
 LCD_D5 = 22
@@ -65,17 +66,18 @@ LCD_WIDTH = 20    # Default characters per line
 LCD_CHR = True
 LCD_CMD = False
 
-LCD_LINE_1 = 0x80 # LCD RAM address for the 1st line
-LCD_LINE_2 = 0xC0 # LCD RAM address for the 2nd line
-LCD_LINE_3 = 0x94 # LCD RAM address for the 3rd line
-LCD_LINE_4 = 0xD4 # LCD RAM address for the 4th line
+LCD_LINE_1 = 0x80  # LCD RAM address for the 1st line
+LCD_LINE_2 = 0xC0  # LCD RAM address for the 2nd line
+LCD_LINE_3 = 0x94  # LCD RAM address for the 3rd line
+LCD_LINE_4 = 0xD4  # LCD RAM address for the 4th line
 
 # Some LCDs use different addresses (16 x 4 line LCDs)
 # Comment out the above two lines and uncomment the two lines below
 # LCD_LINE_3 = 0x90 # LCD RAM address for the 3rd line
 # LCD_LINE_4 = 0xD0 # LCD RAM address for the 4th line
 
-# If using a 4 x 16 display also amend the lcd.setWidth(<width>) statement in rradio4.py
+# If using a 4 x 16 display also amend the lcd.setWidth(<width>) statement
+# in rradio4.py
 
 # Timing constants
 E_PULSE = 0.00005
@@ -85,12 +87,15 @@ POSITION_LEFT = 'left'
 POSITION_CENTER = 'center'
 POSITION_RIGHT = 'right'
 
+
 def interrupt():
     return False
 
 # Lcd Class
+
+
 class Lcd(ScreenBase):
-    
+
     width = LCD_WIDTH
     # If display can support umlauts set to True else False
     displayUmlauts = True
@@ -100,7 +105,7 @@ class Lcd(ScreenBase):
     lcd_p1 = lcd_p2 = lcd_p3 = lcd_p4 = 0
 
     lcd_line1 = lcd_line2 = lcd_line3 = lcd_line4 = ""
-    #new_line1 = new_line2 = new_line3 = new_line4 = ""
+    # new_line1 = new_line2 = new_line3 = new_line4 = ""
 
     timerRefresh = None
     timerLine1 = None
@@ -114,17 +119,17 @@ class Lcd(ScreenBase):
         GPIO.setmode(GPIO.BCM)            # Use BCM GPIO numbers
         GPIO.setup(LCD_E, GPIO.OUT)        # E
         GPIO.setup(LCD_RS, GPIO.OUT)    # RS
-        GPIO.setup(self.lcd_d4, GPIO.OUT) # DB4
+        GPIO.setup(self.lcd_d4, GPIO.OUT)  # DB4
         GPIO.setup(LCD_D5, GPIO.OUT)    # DB5
         GPIO.setup(LCD_D6, GPIO.OUT)    # DB6
         GPIO.setup(LCD_D7, GPIO.OUT)    # DB7
 
-        self._byte_out(0x33,LCD_CMD)
-        self._byte_out(0x32,LCD_CMD)
-        self._byte_out(0x28,LCD_CMD)
-        self._byte_out(0x0C,LCD_CMD)
-        self._byte_out(0x06,LCD_CMD)
-        self._byte_out(0x01,LCD_CMD)
+        self._byte_out(0x33, LCD_CMD)
+        self._byte_out(0x32, LCD_CMD)
+        self._byte_out(0x28, LCD_CMD)
+        self._byte_out(0x0C, LCD_CMD)
+        self._byte_out(0x06, LCD_CMD)
+        self._byte_out(0x01, LCD_CMD)
         time.sleep(1)
 
         self.timerRefresh = threading.Timer(0.5, self._refresh, [0.3])
@@ -137,127 +142,121 @@ class Lcd(ScreenBase):
 
     def refreshDisplay(self):
         if self.mode == self.MODE_MENU:
-            #Ici on affiche le menu sur les 3 lignes du bas
-            
-            #pos = self.menu_current -1
-            #if pos < 0:
+            # Ici on affiche le menu sur les 3 lignes du bas
+
+            # pos = self.menu_current -1
+            # if pos < 0:
             #    pos = 0
-            
-            #for i in range(2,4):
-                    
-            #if self.menu_current == 0:
+
+            # for i in range(2,4):
+
+            # if self.menu_current == 0:
             #    self.setLine2(">> " + self.options[self.menu_current][0])
-            #else:
+            # else:
             #    self.setLine2(">> " + self.options[self.menu_current -1][0])
-            
-            #if len(self.options) > 2:
-            pass   
-            
-            
+
+            # if len(self.options) > 2:
+            pass
+
         elif self.mode == self.MODE_RADIO:
             pass
         elif self.mode == self.MODE_MUSIC:
             pass
 
     # Set the display width
-    def setWidth(self,width):
+    def setWidth(self, width):
         self.width = width
         return
 
-
-    def setLine1(self,text,position=POSITION_LEFT):
+    def setLine1(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
         if li != self.lcd_line1:
             self.lcd_line1 = li
             self.lcd_p1 = 0
 
-
-    def setLine2(self,text,position=POSITION_LEFT):
+    def setLine2(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
         if li != self.lcd_line2:
             self.lcd_line2 = li
             self.lcd_p2 = 0
 
-
-    def setLine3(self,text,position=POSITION_LEFT):
+    def setLine3(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
         if li != self.lcd_line3:
             self.lcd_line3 = li
             self.lcd_p3 = 0
 
-
-    def setLine4(self,text,position=POSITION_LEFT):
+    def setLine4(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
         if li != self.lcd_line4:
             self.lcd_line4 = li
             self.lcd_p4 = 0
 
-
     def _formatText(self, text, position):
-        ret = text.strip(' ');
+        ret = text.strip(' ')
         if position == POSITION_CENTER:
             ret = ret.center(LCD_WIDTH, ' ')
         elif position == POSITION_RIGHT:
             ret = ret.rjust(LCD_WIDTH, ' ')
         return ret
 
-    def setVolume(self,volume):
+    def setVolume(self, volume):
         self.volume = volume
         ligne = strftime("%d/%m %H:%M   Vol " + str(volume), localtime())
         self.setLine1(ligne)
 
-    def _refreshLine1(self,tempo = 10.0):
+    def _refreshLine1(self, tempo=10.0):
         ligne = strftime("%d/%m %H:%M   Vol " + str(self.volume), localtime())
         self.setLine1(ligne)
         self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])
         self.timerLine1.start()
 
-    def _refresh(self,tempo = 0.5):
+    def _refresh(self, tempo=0.5):
 
-        self.lcd_p1 = self._affLine(LCD_LINE_1,self.lcd_line1,self.lcd_p1)
-        self.lcd_p2 = self._affLine(LCD_LINE_2,self.lcd_line2,self.lcd_p2)
-        self.lcd_p3 = self._affLine(LCD_LINE_3,self.lcd_line3,self.lcd_p3)
-        self.lcd_p4 = self._affLine(LCD_LINE_4,self.lcd_line4,self.lcd_p4)
+        self.lcd_p1 = self._affLine(LCD_LINE_1, self.lcd_line1, self.lcd_p1)
+        self.lcd_p2 = self._affLine(LCD_LINE_2, self.lcd_line2, self.lcd_p2)
+        self.lcd_p3 = self._affLine(LCD_LINE_3, self.lcd_line3, self.lcd_p3)
+        self.lcd_p4 = self._affLine(LCD_LINE_4, self.lcd_line4, self.lcd_p4)
 
         self.timerRefresh = threading.Timer(tempo, self._refresh, [tempo])
         self.timerRefresh.start()
 
         return
 
-
     def clear(self):
         self.lcd_p1 = self.lcd_p2 = self.lcd_p3 = self.lcd_p4 = 0
-    
-        self.lcd_line1 = self.lcd_line2 = self.lcd_line3 = self.lcd_line4 = ""
-        #self._refreshLine1()
-        #self.new_line1 = self.new_line2 = self.new_line3 = self.new_line4 = ""
-        
 
-    def _affLine(self,lcd_line,text,pos):
+        self.lcd_line1 = self.lcd_line2 = self.lcd_line3 = self.lcd_line4 = ""
+        # self._refreshLine1()
+        # self.new_line1 = self.new_line2 = self.new_line3 = self.new_line4 =
+        # ""
+
+    def _affLine(self, lcd_line, text, pos):
         ret = pos
         if text is None:
             text = ''
-            
+
         if len(text) > 0 and len(text) <= self.width:
-            if pos==0:
+            if pos == 0:
                 self._byte_out(lcd_line, LCD_CMD)
                 self._string(text)
                 return -2
         else:
             if pos >= 0:
-                ligne = text                
-                if len(text) <= self.width:    
+                ligne = text
+                if len(text) <= self.width:
                     ret = 0
                 else:
-                    ligne = '{0} ... {1}'.format(text,text)
-                    ligne = ligne[pos:pos+self.width]
-        
-                    #print 'Pos : {0} // Texte : {1}'.format(pos,ligne)
-    
+                    ligne = '{0} ... {1}'.format(text, text)
+                    ligne = ligne[pos:pos + self.width]
+
+                    # print 'Pos : {0} // Texte : {1}'.format(pos,ligne)
+
                     ret += 1
-                    
-                    #On revient au début lorsqu'on a dépassé la longueur du texte de départ
-                    if ret >= (len(text) +5):
+
+                    # On revient au début lorsqu'on a dépassé la longueur du
+                    # texte de départ
+                    if ret >= (len(text) + 5):
                         ret = 0
 
                 self._byte_out(lcd_line, LCD_CMD)
@@ -266,34 +265,34 @@ class Lcd(ScreenBase):
         return ret
 
     # Send string to display
-    def _string(self,message):
-        s = message.ljust(self.width," ")
+    def _string(self, message):
+        s = message.ljust(self.width, " ")
         if not self.RawMode:
             s = self.translateSpecialChars(s)
         for i in range(self.width):
-            self._byte_out(ord(s[i]),LCD_CHR)
+            self._byte_out(ord(s[i]), LCD_CHR)
         return
 
     # Output byte to Led  mode = Command or Data
-    def _byte_out(self,bits, mode):
+    def _byte_out(self, bits, mode):
         # Send byte to data pins
         # bits = data
         # mode = True  for character
         #        False for command
-        GPIO.output(LCD_RS, mode) # RS
+        GPIO.output(LCD_RS, mode)  # RS
 
         # High bits
         GPIO.output(self.lcd_d4, False)
         GPIO.output(LCD_D5, False)
         GPIO.output(LCD_D6, False)
         GPIO.output(LCD_D7, False)
-        if bits&0x10==0x10:
+        if bits & 0x10 == 0x10:
             GPIO.output(self.lcd_d4, True)
-        if bits&0x20==0x20:
+        if bits & 0x20 == 0x20:
             GPIO.output(LCD_D5, True)
-        if bits&0x40==0x40:
+        if bits & 0x40 == 0x40:
             GPIO.output(LCD_D6, True)
-        if bits&0x80==0x80:
+        if bits & 0x80 == 0x80:
             GPIO.output(LCD_D7, True)
 
         # Toggle 'Enable' pin
@@ -308,13 +307,13 @@ class Lcd(ScreenBase):
         GPIO.output(LCD_D5, False)
         GPIO.output(LCD_D6, False)
         GPIO.output(LCD_D7, False)
-        if bits&0x01==0x01:
+        if bits & 0x01 == 0x01:
             GPIO.output(self.lcd_d4, True)
-        if bits&0x02==0x02:
+        if bits & 0x02 == 0x02:
             GPIO.output(LCD_D5, True)
-        if bits&0x04==0x04:
+        if bits & 0x04 == 0x04:
             GPIO.output(LCD_D6, True)
-        if bits&0x08==0x08:
+        if bits & 0x08 == 0x08:
             GPIO.output(LCD_D7, True)
 
         # Toggle 'Enable' pin
@@ -326,18 +325,18 @@ class Lcd(ScreenBase):
         return
 
     # Set raw mode on (No translation)
-    def setRawMode(self,value):
+    def setRawMode(self, value):
         self.RawMode = value
         return
 
     # Display umlats if tro elese oe ae etc
-    def displayUmlauts(self,value):
+    def displayUmlauts(self, value):
         self.displayUmlauts = value
         return
 
     # Translate special characters (umlautes etc) to LCD values
     # See standard character patterns for LCD display
-    def translateSpecialChars(self,sp):
+    def translateSpecialChars(self, sp):
         s = sp
 
         # Currency

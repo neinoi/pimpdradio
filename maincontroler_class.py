@@ -17,6 +17,7 @@ from controlers.controler_base import Controler
 from controlers.MenuPrincipal import MenuPrincipal
 from encoders.encoder_class import Encoder
 
+
 class MainControler(Controler):
 
     currentControler = None
@@ -57,13 +58,13 @@ class MainControler(Controler):
     def setControler(self, newControler):
         self.currentControler = newControler
         self.currentControler.refresh()
-        
+
     def setReady(self, isReady):
         self.ready = isReady
-        
+
         self.startupSong = self.mpd.currentsong()
-        
+
         if isReady:
             self.currentControler.testStatus()
-        
+
 # End of MainControler class

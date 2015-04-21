@@ -14,28 +14,34 @@ CHOIX_RADIO = 1
 CHOIX_MUSIC = 2
 CHOIX_SYSTEM = 3
 
+
 class MenuPrincipal(MenuControler):
+
     '''
     classdocs
     '''
-    
+
     def __init__(self, config, lcd, mpd, rootControler):
-        
-        #Tableau de tuples (id,ligne à afficher,fonction à lancer)
-        options = [("Radio",self.choix,CHOIX_RADIO),
-                   ("Music",self.choix,CHOIX_MUSIC),
-                   ("System",self.choix,CHOIX_SYSTEM)]
-        
+
+        # Tableau de tuples (id,ligne à afficher,fonction à lancer)
+        options = [("Radio", self.choix, CHOIX_RADIO),
+                   ("Music", self.choix, CHOIX_MUSIC),
+                   ("System", self.choix, CHOIX_SYSTEM)]
+
         MenuControler.__init__(self, config, lcd, mpd, rootControler, options)
 
     def choix(self, choix):
         if choix == CHOIX_RADIO:
-            self.rootControler.setControler(RadioControler(self.config, self.lcd, self.mpd, self.rootControler))
+            self.rootControler.setControler(
+                RadioControler(self.config, self.lcd,
+                               self.mpd, self.rootControler))
         elif choix == CHOIX_MUSIC:
             print "TODO"
         elif choix == CHOIX_SYSTEM:
-            self.rootControler.setControler(SystemMenu(self.config, self.lcd, self.mpd, self.rootControler))
-    
+            self.rootControler.setControler(
+                SystemMenu(self.config, self.lcd,
+                           self.mpd, self.rootControler))
+
     def testStatus(self):
         try:
             mpdFile = self.rootControler.startupSong['file']
@@ -43,7 +49,6 @@ class MenuPrincipal(MenuControler):
                 self.choix(CHOIX_RADIO)
             else:
                 self.choix(CHOIX_MUSIC)
-            
+
         except:
-            pass    
-    
+            pass

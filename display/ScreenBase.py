@@ -11,7 +11,9 @@ MODE_MENU = 0
 MODE_RADIO = 1
 MODE_MUSIC = 2
 
+
 class ScreenBase(object):
+
     '''
     classdocs
     '''
@@ -22,17 +24,17 @@ class ScreenBase(object):
         '''
         Constructor
         '''
-        
+
     def setVolume(self, volume):
         self.volume = volume
-        
+
     def setMode(self, mode):
         self.mode = mode
-        
+
     def setMenu(self, options, current):
         self.menu_options = options
         self.menu_current = current
         self.mode = MODE_MENU
-        
+
     def refreshDisplay(self):
         raise NotImplementedError('refreshDisplay => TO BE IMPLEMENTED')

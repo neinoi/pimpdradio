@@ -16,6 +16,7 @@ import os
 import time
 from mpd import MPDClient
 
+
 class Controler:
 
     lcd = None
@@ -24,13 +25,14 @@ class Controler:
     rootControler = None
     previousControler = None
     currentVolume = None
-            
-    def __init__(self, config, lcd, mpd, rootControler, previousControler=None):
+
+    def __init__(self, config, lcd, mpd,
+                 rootControler, previousControler=None):
         self.config = config
         self.lcd = lcd
         self.mpd = mpd
         self.rootControler = rootControler
-        self.previousControler = previousControler        
+        self.previousControler = previousControler
 
     # Execute MPC comnmand using mpd library - Connect client if required
     def execMpc(self, cmd):
@@ -40,7 +42,6 @@ class Controler:
             if self.connect(self.mpdport):
                 ret = cmd
         return ret
-
 
     # Connect to MPD
     def connect(self, port):
@@ -56,7 +57,8 @@ class Controler:
                 connection = True
                 retry = 0
             except:
-                time.sleep(0.5)    # Wait for interrupt in the case of a shutdown
+                time.sleep(0.5)
+                # Wait for interrupt in the case of a shutdown
                 if retry < 2:
                     self.execCommand("service mpd restart")
                 else:
@@ -67,9 +69,9 @@ class Controler:
         return connection
 
     # Execute system command
-    def execCommand(self,cmd):
+    def execCommand(self, cmd):
         p = os.popen(cmd)
-        return  p.readline().rstrip('\n')
+        return p.readline().rstrip('\n')
 
     def refresh(self):
         print "refresh NotImplementedError"
@@ -79,17 +81,17 @@ class Controler:
 
     def tunerUp(self):
         print "tunerUp NotImplementedError"
-    
+
     def tunerDown(self):
         print "tunerDown NotImplementedError"
-    
+
     def tunerClickDown(self):
         print "tunerClickDown NotImplementedError"
-    
+
     def tunerClickUp(self):
         print "tunerClickUp NotImplementedError"
 
-    def getVolume(self, refresh = False):
+    def getVolume(self, refresh=False):
         if self.currentVolume is None or self.currentVolume == 0:
             volume = 0
             try:
@@ -97,33 +99,33 @@ class Controler:
                 volume = int(stats.get("volume"))
             except:
                 volume = 0
-    
+
             if volume == str("None"):
                 volume = 0
-            
+
             self.currentVolume = volume
-        
+
         return self.currentVolume
 
     def volumeUp(self):
         self.setVolume(self.getVolume() + 5)
-    
+
     def volumeDown(self):
         self.setVolume(self.getVolume() - 5)
-    
+
     def volumeClickDown(self):
         print "columeClickDown NotImplementedError"
 
     def volumeClickUp(self):
         print "volumeClickUp NotImplementedError"
-        
-    def setVolume(self,volume):
+
+    def setVolume(self, volume):
         if volume > self.config.getMaxVolume():
             volume = self.config.getMaxVolume()
         elif volume < 0:
             volume = 0
         self.currentVolume = volume
-        
+
         self.execMpc(self.mpd.setvol(volume))
         self.lcd.setVolume(volume)
 
@@ -141,7 +143,7 @@ class Controler:
                 pass
         return currentsong
 
-    # Get the title of the currently playing station or track from mpd 
+    # Get the title of the currently playing station or track from mpd
     def getCurrentTitle(self):
         try:
             currentsong = self.getCurrentSong()
@@ -162,7 +164,7 @@ class Controler:
         if title == '':
             # Usually used if this is a podcast
             if len(genre) > 0:
-                title = genre    
+                title = genre
 
         return title
 # End of MainControler class

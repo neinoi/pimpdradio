@@ -119,7 +119,7 @@ class MyDaemon(Daemon):
 #         interrupt = get_switch_states(lcd, radio, rss, volumeknob, tunerknob)
 #         radio.setSwitch(0)
 #
-#     # Rapid display of track play status
+# Rapid display of track play status
 #     if radio.getSource() == radio.PLAYER:
 #         if radio.volumeChanged():
 #             displayLine4(lcd, radio, "Volume " + str(radio.getVolume()))
@@ -148,7 +148,7 @@ def exec_cmd(cmd):
     return result
 
 
-# ### Main routine ###
+# Main routine ###
 if __name__ == "__main__":
     daemon = MyDaemon('/var/run/radiod.pid')
     if len(sys.argv) == 2:

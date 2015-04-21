@@ -11,8 +11,9 @@
 #
 # License: GNU V3, See https://www.gnu.org/copyleft/gpl.html
 #
-# Disclaimer: Software is provided as is and absolutly no warranties are implied or given.
-#             The authors shall not be liable for any loss or damage however caused.
+# Disclaimer: Software is provided as is and absolutly no warranties are
+#             implied or given. The authors shall not be liable for any loss
+#             or damage however caused.
 #
 
 from encoder_class import Encoder
@@ -23,6 +24,7 @@ import gaugette.switch
 
 TEMPO = 0.15
 
+
 class RotaryEncoder(Encoder):
 
     last_state = None
@@ -32,10 +34,11 @@ class RotaryEncoder(Encoder):
     switch = None
 
     # Initialise rotary encoder object
-    def __init__(self,pinUp,pinDown,pinSwitch,callback):
+    def __init__(self, pinUp, pinDown, pinSwitch, callback):
         self.callback = callback
 
-        self.rotary = gaugette.rotary_encoder.RotaryEncoder.Worker(pinUp, pinDown)
+        self.rotary = gaugette.rotary_encoder.RotaryEncoder.Worker(
+            pinUp, pinDown)
         self.rotary.start()
         self.switch = gaugette.switch.Switch(pinSwitch)
 
@@ -43,18 +46,17 @@ class RotaryEncoder(Encoder):
 
         return
 
-
     def _test(self):
-        #rotary test
+        # rotary test
         event = self.NONE
         delta = self.rotary.get_delta()
-        if delta!=0:
+        if delta != 0:
             if delta > 0:
                 event = self.CLOCKWISE
             else:
                 event = self.ANTICLOCKWISE
 
-        #button test
+        # button test
         sw_state = self.switch.get_state()
         if sw_state != self.last_state:
             if sw_state == 0:
@@ -70,12 +72,3 @@ class RotaryEncoder(Encoder):
         return
 
 # End of RotaryEncoder class
-
-
-
-
-
-
-
-
-

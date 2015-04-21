@@ -19,6 +19,7 @@ from pimpdradio.utils.translate_class import Translate
 
 translate = Translate()
 
+
 class MainControler(Controler):
 
     disp = None
@@ -65,7 +66,7 @@ class MainControler(Controler):
 
         dirList = os.listdir("/var/lib/mpd/playlists")
         for fname in dirList:
-            #cmd = "load \"" + fname.strip("\n") + "\""
+            # cmd = "load \"" + fname.strip("\n") + "\""
 
             fname = fname.strip("\n")
             try:

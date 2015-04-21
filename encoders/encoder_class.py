@@ -11,17 +11,18 @@
 #
 # License: GNU V3, See https://www.gnu.org/copyleft/gpl.html
 #
-# Disclaimer: Software is provided as is and absolutly no warranties are implied or given.
-#             The authors shall not be liable for any loss or damage however caused.
+# Disclaimer: Software is provided as is and absolutly no warranties are
+#             implied or given. The authors shall not be liable for any loss
+#             or damage however caused.
 #
+
 
 class Encoder:
 
-	NONE=-1
-	CLOCKWISE=1
-	ANTICLOCKWISE=2
-	BUTTONDOWN=3
-	BUTTONUP=4
+    NONE = -1
+    CLOCKWISE = 1
+    ANTICLOCKWISE = 2
+    BUTTONDOWN = 3
+    BUTTONUP = 4
 
 # End of Encoder class
-
