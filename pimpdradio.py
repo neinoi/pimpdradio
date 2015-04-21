@@ -33,7 +33,7 @@ from utils.config_class import Config
 from mpd import MPDClient
 
 from encoders.gaugette_class import RotaryEncoder
-#from encoders.rotary_class import RotaryEncoder
+# from encoders.rotary_class import RotaryEncoder
 
 from maincontroler_class import MainControler
 
@@ -43,9 +43,9 @@ tempo = 0.2
 
 lcd = Lcd()
 mpd = MPDClient()    # Create the MPD client
-mpd.connect(config.getMpdHost(), config.getMpdPort())  # connect to localhost:6600
+mpd.connect(config.getMpdHost(), config.getMpdPort())
 
-#lcd.init(config.getBoardRevision(), tempo)
+# lcd.init(config.getBoardRevision(), tempo)
 lcd.init()
 lcd.setWidth(config.getLcdWidth())
 
@@ -54,15 +54,20 @@ controler = MainControler(config, lcd, mpd)
 time.sleep(5)
 
 print 'Initializing tuner controls ...'
-tunerknob = RotaryEncoder(config.getSwitchMenuUp(), config.getSwitchMenuDown(), config.getSwitchMenuButton(),
+tunerknob = RotaryEncoder(config.getSwitchMenuUp(),
+                          config.getSwitchMenuDown(),
+                          config.getSwitchMenuButton(),
                           controler.tuner_event)
 time.sleep(5)
 
 print 'Initializing volume controls ...'
-volumeknob = RotaryEncoder(config.getSwitchVolumeUp(), config.getSwitchVolumeDown(), config.getSwitchVolumeButton(),
+volumeknob = RotaryEncoder(config.getSwitchVolumeUp(),
+                           config.getSwitchVolumeDown(),
+                           config.getSwitchVolumeButton(),
                            controler.volume_event)
 time.sleep(5)
 controler.setReady(True)
+
 
 # Signal SIGTERM handler
 def signalHandler(signal, frame):
@@ -113,7 +118,7 @@ class MyDaemon(Daemon):
 #     if switch > 0:
 #         interrupt = get_switch_states(lcd, radio, rss, volumeknob, tunerknob)
 #         radio.setSwitch(0)
-# 
+#
 #     # Rapid display of track play status
 #     if radio.getSource() == radio.PLAYER:
 #         if radio.volumeChanged():
@@ -121,14 +126,14 @@ class MyDaemon(Daemon):
 #             time.sleep(0.5)
 #         else:
 #             lcd.line4(radio.getProgress())
-# 
+#
 #     elif (radio.getTimer() and not interrupt) or radio.volumeChanged():
 #         displayLine4(lcd, radio, "Volume " + str(radio.getVolume()))
 #         interrupt = checkTimer(radio)
-# 
+#
 #     if not interrupt:
 #         interrupt = checkState(radio)
-# 
+#
 #     return interrupt
 
 

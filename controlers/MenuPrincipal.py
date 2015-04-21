@@ -36,3 +36,14 @@ class MenuPrincipal(MenuControler):
         elif choix == CHOIX_SYSTEM:
             self.rootControler.setControler(SystemMenu(self.config, self.lcd, self.mpd, self.rootControler))
     
+    def testStatus(self):
+        try:
+            mpdFile = self.rootControler.startupSong['file']
+            if mpdFile[:7] == 'http://' or mpdFile[:8] == 'https://':
+                self.choix(CHOIX_RADIO)
+            else:
+                self.choix(CHOIX_MUSIC)
+            
+        except:
+            pass    
+    

@@ -22,6 +22,7 @@ class MainControler(Controler):
     currentControler = None
     timerRefresh = None
     ready = False
+    startupSong = None
 
     def __init__(self, config, lcd, mpd):
         Controler.__init__(self, config, lcd, mpd, None)
@@ -59,5 +60,10 @@ class MainControler(Controler):
         
     def setReady(self, isReady):
         self.ready = isReady
+        
+        self.startupSong = self.mpd.currentsong()
+        
+        if isReady:
+            self.currentControler.testStatus()
         
 # End of MainControler class

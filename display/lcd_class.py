@@ -100,7 +100,7 @@ class Lcd(ScreenBase):
     lcd_p1 = lcd_p2 = lcd_p3 = lcd_p4 = 0
 
     lcd_line1 = lcd_line2 = lcd_line3 = lcd_line4 = ""
-    new_line1 = new_line2 = new_line3 = new_line4 = ""
+    #new_line1 = new_line2 = new_line3 = new_line4 = ""
 
     timerRefresh = None
     timerLine1 = None
@@ -130,9 +130,8 @@ class Lcd(ScreenBase):
         self.timerRefresh = threading.Timer(0.5, self._refresh, [0.3])
         self.timerRefresh.start()
 
-        self.timerLine1 = threading.Timer(60.0, self._refreshLine1, [60.0])
+        self.timerLine1 = threading.Timer(10.0, self._refreshLine1, [5.0])
         self.timerLine1.start()
-
 
         return
 
@@ -167,35 +166,31 @@ class Lcd(ScreenBase):
 
 
     def setLine1(self,text,position=POSITION_LEFT):
-        #print "line1 : {0}".format(text)
-        self.new_line1 = self._formatText(text, position)
-        self.lcd_p1 = 0
-        
-        #self._refresh()
+        li = self._formatText(text, position)
+        if li != self.lcd_line1:
+            self.lcd_line1 = li
+            self.lcd_p1 = 0
 
 
     def setLine2(self,text,position=POSITION_LEFT):
-        #print "line2 : {0}".format(text)
-        self.new_line2 = self._formatText(text, position)
-        self.lcd_p2 = 0
-        
-        #self._refresh()
+        li = self._formatText(text, position)
+        if li != self.lcd_line2:
+            self.lcd_line2 = li
+            self.lcd_p2 = 0
 
 
     def setLine3(self,text,position=POSITION_LEFT):
-        #print "line3 : {0}".format(text)
-        self.new_line3 = self._formatText(text, position)
-        self.lcd_p3 = 0
-        
-        #self._refresh()
+        li = self._formatText(text, position)
+        if li != self.lcd_line3:
+            self.lcd_line3 = li
+            self.lcd_p3 = 0
 
 
     def setLine4(self,text,position=POSITION_LEFT):
-        #print "line4 : {0}".format(text)
-        self.new_line4 = self._formatText(text, position)
-        self.lcd_p4 = 0
-        
-        #self._refresh()
+        li = self._formatText(text, position)
+        if li != self.lcd_line4:
+            self.lcd_line4 = li
+            self.lcd_p4 = 0
 
 
     def _formatText(self, text, position):
@@ -211,47 +206,21 @@ class Lcd(ScreenBase):
         ligne = strftime("%d/%m %H:%M   Vol " + str(volume), localtime())
         self.setLine1(ligne)
 
-    def _refreshLine1(self,tempo = 60.0):
+    def _refreshLine1(self,tempo = 10.0):
         ligne = strftime("%d/%m %H:%M   Vol " + str(self.volume), localtime())
         self.setLine1(ligne)
-        self.timerLine1 = threading.Timer(60.0, self._refreshLine1, [60.0])
+        self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])
         self.timerLine1.start()
 
     def _refresh(self,tempo = 0.5):
-        #         if timerRefresh is not None:
-        #             try:
-        #                 timerRefresh.cancel()
-        #             except:
-        #                 pass
-        
-        if self.new_line1 != self.lcd_line1 or len(self.lcd_line1) > LCD_WIDTH:
-            self.lcd_line1 = self.new_line1
-            self.lcd_p1 = self._affLine(LCD_LINE_1,self.lcd_line1,self.lcd_p1)
-            
-        if self.new_line2 != self.lcd_line2 or len(self.lcd_line2) > LCD_WIDTH:
-            self.lcd_line2 = self.new_line2
-            self.lcd_p2 = self._affLine(LCD_LINE_2,self.lcd_line2,self.lcd_p2)
-            
-        if self.new_line3 != self.lcd_line3 or len(self.lcd_line3) > LCD_WIDTH:
-            self.lcd_line3 = self.new_line3
-            self.lcd_p3 = self._affLine(LCD_LINE_3,self.lcd_line3,self.lcd_p3)
-            
-        if self.new_line4 != self.lcd_line4 or len(self.lcd_line4) > LCD_WIDTH:
-            self.lcd_line4 = self.new_line4
-            self.lcd_p4 = self._affLine(LCD_LINE_4,self.lcd_line4,self.lcd_p4)
 
-        if self.lcd_p1 < 0 and self.lcd_p2 < 0 and self.lcd_p3 < 0 and self.lcd_p4 < 0:
-            self.lcd_p1 = 0
-            self.lcd_p2 = 0
-            self.lcd_p3 = 0
-            self.lcd_p4 = 0
+        self.lcd_p1 = self._affLine(LCD_LINE_1,self.lcd_line1,self.lcd_p1)
+        self.lcd_p2 = self._affLine(LCD_LINE_2,self.lcd_line2,self.lcd_p2)
+        self.lcd_p3 = self._affLine(LCD_LINE_3,self.lcd_line3,self.lcd_p3)
+        self.lcd_p4 = self._affLine(LCD_LINE_4,self.lcd_line4,self.lcd_p4)
 
-        if self.lcd_p1 == 0 and self.lcd_p2 == 0 and self.lcd_p3 == 0 and self.lcd_p4 == 0:
-            self.timerRefresh = threading.Timer(tempo*5, self._refresh, [tempo])
-            self.timerRefresh.start()
-        else:
-            self.timerRefresh = threading.Timer(tempo, self._refresh, [tempo])
-            self.timerRefresh.start()
+        self.timerRefresh = threading.Timer(tempo, self._refresh, [tempo])
+        self.timerRefresh.start()
 
         return
 
@@ -260,7 +229,8 @@ class Lcd(ScreenBase):
         self.lcd_p1 = self.lcd_p2 = self.lcd_p3 = self.lcd_p4 = 0
     
         self.lcd_line1 = self.lcd_line2 = self.lcd_line3 = self.lcd_line4 = ""
-        self.new_line1 = self.new_line2 = self.new_line3 = self.new_line4 = ""
+        #self._refreshLine1()
+        #self.new_line1 = self.new_line2 = self.new_line3 = self.new_line4 = ""
         
 
     def _affLine(self,lcd_line,text,pos):
@@ -270,20 +240,28 @@ class Lcd(ScreenBase):
             
         if len(text) > 0 and len(text) <= self.width:
             if pos==0:
-                ret = -2
                 self._byte_out(lcd_line, LCD_CMD)
                 self._string(text)
+                return -2
         else:
             if pos >= 0:
-                t = text[pos:pos+self.width]
-                ret = ret +1
+                ligne = text                
+                if len(text) <= self.width:    
+                    ret = 0
+                else:
+                    ligne = '{0} ... {1}'.format(text,text)
+                    ligne = ligne[pos:pos+self.width]
+        
+                    #print 'Pos : {0} // Texte : {1}'.format(pos,ligne)
+    
+                    ret += 1
+                    
+                    #On revient au début lorsqu'on a dépassé la longueur du texte de départ
+                    if ret >= (len(text) +5):
+                        ret = 0
 
                 self._byte_out(lcd_line, LCD_CMD)
-                if len(t) < self.width:
-                    t = text[0:self.width+1]
-                    ret = -1
-
-                self._string(t)
+                self._string(ligne)
 
         return ret
 

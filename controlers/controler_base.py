@@ -74,6 +74,9 @@ class Controler:
     def refresh(self):
         print "refresh NotImplementedError"
 
+    def testStatus(self):
+        print "testStatus NotImplementedError"
+
     def tunerUp(self):
         print "tunerUp NotImplementedError"
     

@@ -8,6 +8,7 @@ Created on 4 janv. 2015
 '''
 
 import os
+import time
 
 from menucontroler_base import MenuControler
 from RadioDisplay import RadioDisplay
@@ -21,12 +22,28 @@ class RadioControler(MenuControler):
     playlist = []
     
     def __init__(self, config, lcd, mpd, rootControler):
+        
+        #Test si une radio est en cours de lecture …
+        radioEncours = False
+        mpdFile = ''
+        try:
+            mpdFile = rootControler.startupSong['file']
+            if mpdFile[:7] == 'http://' or mpdFile[:8] == 'https://':
+                radioEncours = True
+        except:
+            pass
+         
         self.loadStations(mpd, config.getPlaylistsDir())
-
+        self.createPlayList()
+            
         MenuControler.__init__(self, config, lcd, mpd, rootControler, self.playlist)
 
+        if radioEncours and len(mpd.playlistfind('file',mpdFile)) > 0:      
+            lastPos = int(mpd.playlistfind('file',mpdFile)[0]['pos'])
+            self.choixRadio(lastPos)
+
     def choixRadio(self, numRadio):
-        self.execMpc(self.mpd.play(numRadio))
+        self.mpd.play(numRadio)
         self.rootControler.setControler(RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd, self.mpd, self.rootControler, self))
         
     # Load radio stations
@@ -47,9 +64,6 @@ class RadioControler(MenuControler):
         self.execMpc(mpd.consume(0))
         self.execMpc(mpd.repeat(0))
 
-        self.createPlayList()
-        self.execMpc(mpd.play(0))
-        return
     
     # Create list of tracks or stations
     def createPlayList(self):
@@ -65,4 +79,4 @@ class RadioControler(MenuControler):
             #line = translate.escape(line)
             self.playlist.append((line,self.choixRadio,num))
             num = num + 1 
-    
+        
