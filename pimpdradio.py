@@ -25,6 +25,7 @@ import RPi.GPIO as GPIO
 import signal
 import sys
 import time
+import logging
 
 # Class imports
 from utils.radio_daemon import Daemon
@@ -38,6 +39,7 @@ from encoders.gaugette_class import RotaryEncoder
 from maincontroler_class import MainControler
 
 config = Config('/etc/pimpdradio.cfg')
+logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(message)s')
 
 tempo = 0.2
 

@@ -7,6 +7,7 @@ Created on 4 janv. 2015
 @author: julien
 '''
 
+import logging
 import threading
 from controler_base import Controler
 
@@ -69,8 +70,8 @@ class RadioDisplay(Controler):
 
             try:
                 self.l2 = curSong['name']
-            except:
-                pass
+            except Exception as e:
+                logging.info('RadioDisplay.refresh error : {0}'.format(str(e)))
 
             try:
                 curT = curSong['title']
@@ -83,11 +84,11 @@ class RadioDisplay(Controler):
                         self.l4 = spl[1]
                     else:
                         self.l4 = ''
-            except:
-                pass
+            except Exception as e:
+                logging.info('RadioDisplay.refresh error : {0}'.format(str(e)))
 
-        except:
-            pass
+        except Exception as e:
+            logging.warning('RadioDisplay.refresh error : {0}'.format(str(e)))
 
         self.lcd.setLine2(self.l2, 'center')
         self.lcd.setLine3(self.l3, 'center')
@@ -105,5 +106,5 @@ class RadioDisplay(Controler):
         self.timerContinue = False
         try:
             self.timerRefresh.cancel()
-        except:
-            pass
+        except :
+            logging.debug('Inactive timer')

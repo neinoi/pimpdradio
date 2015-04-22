@@ -11,6 +11,7 @@
 # The authors shall not be liable for any loss or damage however caused.
 #
 
+import logging
 import os
 from pimpdradio.encoders.encoder_class import Encoder
 from controler_base import Controler
@@ -72,7 +73,7 @@ class MainControler(Controler):
             try:
                 self.execMpc(self.mpd.load(fname))
             except:
-                print "Failed to load playlist " + fname
+                logging.error('Failed to load playlist {0}'.format(fname))
 
         self.execMpc(self.mpd.random(0))
         self.execMpc(self.mpd.consume(0))

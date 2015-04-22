@@ -25,7 +25,7 @@
 #             loss or damage however caused.
 #
 
-
+import logging
 import threading
 import time
 from time import localtime, strftime
@@ -211,10 +211,9 @@ class Lcd(ScreenBase):
             if state != 'play':
                 ligne = strftime("%d/%m %H:%M   " + state, localtime())
                  
-            #ligne = strftime("%d/%m %H:%M   Vol " + status['volume'], localtime())
             self.setLine1(ligne)
         except Exception as e:
-            print "LCD refresh error : {0}".format(str(e))
+            logging.warning('LCD refresh error : {0}'.format(str(e)))
             
         if tempo > 0:
             self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])

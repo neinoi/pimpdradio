@@ -8,6 +8,7 @@ Created on 4 janv. 2015
 '''
 
 import os
+import logging
 import threading
 
 from menucontroler_base import MenuControler
@@ -31,8 +32,8 @@ class RadioControler(MenuControler):
             mpdFile = rootControler.startupSong['file']
             if mpdFile[:7] == 'http://' or mpdFile[:8] == 'https://':
                 radioEncours = True
-        except:
-            pass
+        except Exception as e:
+            logging.warning('testStatus error : {0}'.format(str(e)))
 
         self.loadStations(mpd, config.getPlaylistsDir())
         self.createPlayList()
@@ -46,10 +47,14 @@ class RadioControler(MenuControler):
 
     def choixRadio(self, numRadio):
         #print 'RadioControler..choixRadio'
-        self.mpd.play(numRadio)
-        self.rootControler.setControler(
-            RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd,
-                         self.mpd, self.rootControler, self))
+        try:
+            self.execMpc(self.mpd.play(numRadio))
+            self.rootControler.setControler(
+                RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd,
+                             self.mpd, self.rootControler, self))
+        except Exception as e:
+            logging.warning('choixRadio error : {0}'.format(str(e)))
+        
 
     # Load radio stations
     def loadStations(self, mpd, playlistsDir):
@@ -64,7 +69,7 @@ class RadioControler(MenuControler):
             try:
                 self.execMpc(mpd.load(fname))
             except:
-                print "Failed to load playlist " + fname
+                logging.error('Failed to load playlist {0}/{1}'.format(playlistsDir, fname))
 
         self.execMpc(mpd.random(0))
         self.execMpc(mpd.consume(0))

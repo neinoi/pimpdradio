@@ -56,3 +56,9 @@ class Config(object):
 
     def getPlaylistsDir(self):
         return self.config.get("FILES", "PLAYLISTS")
+    
+    def getLogFile(self):
+        return self.config.get("LOG", "FILE")
+
+    def getLogLevel(self):
+        return self.config.getint("LOG", "LEVEL")

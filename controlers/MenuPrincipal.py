@@ -6,6 +6,9 @@ Created on 4 janv. 2015
 
 @author: julien
 '''
+import logging
+import time
+
 from menucontroler_base import MenuControler
 from RadioControler import RadioControler
 from SystemMenu import SystemMenu
@@ -42,7 +45,7 @@ class MenuPrincipal(MenuControler):
                 SystemMenu(self.config, self.lcd,
                            self.mpd, self.rootControler))
 
-    def testStatus(self):
+    def testStatus(self, retry=True):
         try:
             mpdFile = self.rootControler.startupSong['file']
             if mpdFile[:7] == 'http://' or mpdFile[:8] == 'https://':
@@ -50,8 +53,13 @@ class MenuPrincipal(MenuControler):
             else:
                 self.choix(CHOIX_MUSIC)
 
-        except:
-            pass
+        except Exception as e:
+            if retry:
+                time.sleep(1)
+                self.testStatus(False)
+            else:
+                logging.warning('testStatus error : {0}'.format(str(e)))
+            
         
     def stop(self):
         pass

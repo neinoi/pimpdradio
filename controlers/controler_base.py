@@ -12,6 +12,7 @@
 # The authors shall not be liable for any loss or damage however caused.
 #
 
+import logging
 import os
 import time
 from mpd import MPDClient
@@ -39,8 +40,11 @@ class Controler:
         try:
             ret = cmd
         except:
+            logging.warning('MPD reconnection')
             if self.connect():
                 ret = cmd
+            else:
+                logging.error('MPD reconnection failed')
         return ret
 
     # Connect to MPD
@@ -60,8 +64,10 @@ class Controler:
                 time.sleep(0.5)
                 # Wait for interrupt in the case of a shutdown
                 if retry < 2:
+                    logging.warning('LCD service restart')
                     self.execCommand("service mpd restart")
                 else:
+                    logging.warning('LCD service start')
                     self.execCommand("service mpd start")
                 time.sleep(2)    # Give MPD time to restart
                 retry -= 1
@@ -74,22 +80,22 @@ class Controler:
         return p.readline().rstrip('\n')
 
     def refresh(self):
-        print "refresh NotImplementedError"
+        logging.debug("refresh NotImplementedError")
 
     def testStatus(self):
-        print "testStatus NotImplementedError"
+        logging.debug("testStatus NotImplementedError")
 
     def tunerUp(self):
-        print "tunerUp NotImplementedError"
+        logging.debug("tunerUp NotImplementedError")
 
     def tunerDown(self):
-        print "tunerDown NotImplementedError"
+        logging.debug("tunerDown NotImplementedError")
 
     def tunerClickDown(self):
-        print "tunerClickDown NotImplementedError"
+        logging.debug("tunerClickDown NotImplementedError")
 
     def tunerClickUp(self):
-        print "tunerClickUp NotImplementedError"
+        logging.debug("tunerClickUp NotImplementedError")
         
     def stop(self):
         raise Exception('Controler.stop() must be implemented')
@@ -100,6 +106,7 @@ class Controler:
             try:
                 volume = int(self.mpd.status()['volume'])
             except:
+                logging.warning('MPD getVolume failed')
                 volume = 0
 
             self.currentVolume = volume
@@ -113,7 +120,7 @@ class Controler:
         self.setVolume(self.getVolume() - 5)
 
     def volumeClickDown(self):
-        print "volumeClickDown NotImplementedError"
+        logging.debug("volumeClickDown NotImplementedError")
 
     def volumeClickUp(self):
         self.mpd.pause()
@@ -125,7 +132,7 @@ class Controler:
             volume = 0
         self.currentVolume = volume
 
-        self.execMpc(self.mpd.setvol(volume))
+        self.mpd.setvol(volume)
         self.lcd._refreshLine1()
 
     # Get current song information (Only for use within this module)
@@ -134,29 +141,28 @@ class Controler:
         try:
             currentsong = self.execMpc(self.mpd.currentsong())
         except:
-            # Try re-connect and status
-            try:
-                if self.connect(self.mpdport):
-                    currentsong = self.execMpc(self.mpd.currentsong())
-            except:
-                pass
+            logging.error('Cannot get current song')            
+            
         return currentsong
 
     # Get the title of the currently playing station or track from mpd
     def getCurrentTitle(self):
+        title = ''
+        currentsong = self.getCurrentSong()
         try:
-            currentsong = self.getCurrentSong()
-            title = str(currentsong.get("title"))
+            title = str(currentsong['title'])
         except:
-            title = ''
+            logging.warning('Current song : No title')
 
         if title == 'None':
             title = ''
 
+        genre = ''
         try:
-            genre = str(currentsong.get("genre"))
+            genre = str(currentsong['genre'])
         except:
-            genre = ''
+            logging.warning('Current song : No genre')
+
         if genre == 'None':
             genre = ''
 
