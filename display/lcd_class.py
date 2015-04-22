@@ -133,7 +133,7 @@ class Lcd(ScreenBase):
         self._byte_out(0x01, LCD_CMD)
         time.sleep(1)
 
-        self.timerRefresh = threading.Timer(0.5, self._refresh, [0.3])
+        self.timerRefresh = threading.Timer(5.0, self._refresh, [0.2])
         self.timerRefresh.start()
 
         self.timerLine1 = threading.Timer(5.0, self._refreshLine1, [5.0])
@@ -214,7 +214,7 @@ class Lcd(ScreenBase):
             #ligne = strftime("%d/%m %H:%M   Vol " + status['volume'], localtime())
             self.setLine1(ligne)
         except Exception as e:
-            print "LCD refresh error : {0}".format(e)
+            print "LCD refresh error : {0}".format(str(e))
             
         if tempo > 0:
             self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])

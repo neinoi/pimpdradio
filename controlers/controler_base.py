@@ -98,12 +98,8 @@ class Controler:
         if self.currentVolume is None or self.currentVolume == 0:
             volume = 0
             try:
-                stats = self.mpd.status()
-                volume = int(stats.get("volume"))
+                volume = int(self.mpd.status()['volume'])
             except:
-                volume = 0
-
-            if volume == str("None"):
                 volume = 0
 
             self.currentVolume = volume
