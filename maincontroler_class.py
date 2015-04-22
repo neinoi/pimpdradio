@@ -67,7 +67,7 @@ class MainControler(Controler):
     def setReady(self, isReady):
         self.ready = isReady
 
-        self.startupSong = self.mpd.currentsong()
+        self.startupSong = self.execMpc(self.mpd.currentsong())
 
         if isReady:
             self.currentControler.testStatus()

@@ -47,10 +47,10 @@ class RadioDisplay(Controler):
 
     def volumeClickUp(self):
         if self.plId is None:
-            self.plId = int(self.mpd.currentsong()['id'])
-            self.mpd.stop()
+            self.plId = int(self.execMpc(self.mpd.currentsong()['id']))
+            self.execMpc(self.mpd.stop())
         else:
-            self.mpd.playid(self.plId)
+            self.execMpc(self.mpd.playid(self.plId))
             self.plId = None
         self.lcd._refreshLine1()
 
@@ -58,7 +58,7 @@ class RadioDisplay(Controler):
         #print 'RadioDisplay..refresh'
 
         try:
-            curSong = self.mpd.currentsong()
+            curSong = self.execMpc(self.mpd.currentsong())
 
             if curSong['file'] != self.radioFile:
                 self.radioFile = curSong['file']

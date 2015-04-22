@@ -31,7 +31,7 @@ import time
 from time import localtime, strftime
 
 import RPi.GPIO as GPIO
-from display.ScreenBase import ScreenBase
+from ScreenBase import ScreenBase
 
 
 # The wiring for the LCD is as follows:
@@ -111,10 +111,10 @@ class Lcd(ScreenBase):
     timerLine1 = None
 
     # Initialise for revision 2 boards
-    def __init__(self, mpd):
+    def __init__(self, config, mpd):
         
         # LED outputs
-        ScreenBase.__init__(self, mpd)
+        ScreenBase.__init__(self, config, mpd)
 
         GPIO.setwarnings(False)            # Disable warnings
         GPIO.setmode(GPIO.BCM)            # Use BCM GPIO numbers
@@ -203,7 +203,7 @@ class Lcd(ScreenBase):
 
     def _refreshLine1(self, tempo=-1):
         try:
-            status = self.mpd.status()
+            status = self.execMpc(self.mpd.status())
     
             ligne = strftime("%d/%m %H:%M   Vol " + status['volume'], localtime())
             state = status['state']

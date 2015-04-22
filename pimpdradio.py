@@ -46,7 +46,7 @@ tempo = 0.2
 mpd = MPDClient()    # Create the MPD client
 mpd.connect(config.getMpdHost(), config.getMpdPort())
 
-lcd = Lcd(mpd)
+lcd = Lcd(config, mpd)
 lcd.setWidth(config.getLcdWidth())
 
 print 'Initializing main controller ...'

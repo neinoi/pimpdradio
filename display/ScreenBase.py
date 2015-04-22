@@ -11,20 +11,20 @@ MODE_MENU = 0
 MODE_RADIO = 1
 MODE_MUSIC = 2
 
+from controlers.mpdcontroler_base import MPDControler
 
-class ScreenBase(object):
+class ScreenBase(MPDControler):
 
     '''
     classdocs
     '''
     mode = MODE_MENU
-    mpd = None
 
-    def __init__(self, mpd):
+    def __init__(self, config, mpd):
         '''
         Constructor
         '''
-        self.mpd = mpd
+        MPDControler.__init__(self, config, mpd)
 
     def setMode(self, mode):
         self.mode = mode

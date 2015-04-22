@@ -14,65 +14,23 @@
 
 import logging
 import os
-import time
-from mpd import MPDClient
+from mpdcontroler_base import MPDControler
 
-
-class Controler:
+class Controler(MPDControler):
 
     lcd = None
-    mpd = None
-    config = None
     rootControler = None
     previousControler = None
     currentVolume = None
 
     def __init__(self, config, lcd, mpd,
                  rootControler, previousControler=None):
-        self.config = config
+        MPDControler.__init__(self, config, mpd)
+        
         self.lcd = lcd
-        self.mpd = mpd
         self.rootControler = rootControler
         self.previousControler = previousControler
 
-    # Execute MPC comnmand using mpd library - Connect client if required
-    def execMpc(self, cmd):
-        try:
-            ret = cmd
-        except:
-            logging.warning('MPD reconnection')
-            if self.connect():
-                ret = cmd
-            else:
-                logging.error('MPD reconnection failed')
-        return ret
-
-    # Connect to MPD
-    def connect(self):
-        connection = False
-        retry = 2
-        while retry > 0:
-            self.mpd = MPDClient()    # Create the MPD client
-            try:                
-                self.mpd.timeout = 10
-                self.mpd.idletimeout = None
-                self.mpd.connect(self.config.getMpdHost(), self.config.getMpdPort())
-
-                connection = True
-                retry = 0
-            except:
-                time.sleep(0.5)
-                # Wait for interrupt in the case of a shutdown
-                if retry < 2:
-                    logging.warning('LCD service restart')
-                    self.execCommand("service mpd restart")
-                else:
-                    logging.warning('LCD service start')
-                    self.execCommand("service mpd start")
-                time.sleep(2)    # Give MPD time to restart
-                retry -= 1
-
-        return connection
 
     # Execute system command
     def execCommand(self, cmd):
@@ -123,7 +81,7 @@ class Controler:
         logging.debug("volumeClickDown NotImplementedError")
 
     def volumeClickUp(self):
-        self.mpd.pause()
+        self.execMpc(self.mpd.pause())
 
     def setVolume(self, volume):
         if volume > self.config.getMaxVolume():
@@ -132,7 +90,7 @@ class Controler:
             volume = 0
         self.currentVolume = volume
 
-        self.mpd.setvol(volume)
+        self.execMpc(self.mpd.setvol(volume))
         self.lcd._refreshLine1()
 
     # Get current song information (Only for use within this module)
