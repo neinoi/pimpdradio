@@ -130,7 +130,7 @@ class Controler:
         self.currentVolume = volume
 
         self.execMpc(self.mpd.setvol(volume))
-        self.lcd.setVolume(volume)
+        self.lcd._refreshLine1()
 
     # Get current song information (Only for use within this module)
     def getCurrentSong(self):

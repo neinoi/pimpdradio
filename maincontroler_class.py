@@ -28,7 +28,7 @@ class MainControler(Controler):
         Controler.__init__(self, config, lcd, mpd, None)
 
         self.setControler(MenuPrincipal(config, lcd, mpd, self))
-        lcd.setVolume(self.getVolume())
+        #lcd._refreshLine1()
 
     # This is the callback routine to handle tuner events
     def tuner_event(self, event):

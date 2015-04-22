@@ -41,11 +41,10 @@ config = Config('/etc/pimpdradio.cfg')
 
 tempo = 0.2
 
-lcd = Lcd()
 mpd = MPDClient()    # Create the MPD client
 mpd.connect(config.getMpdHost(), config.getMpdPort())
 
-lcd.init()
+lcd = Lcd(mpd)
 lcd.setWidth(config.getLcdWidth())
 
 print 'Initializing main controller ...'

@@ -17,16 +17,14 @@ class ScreenBase(object):
     '''
     classdocs
     '''
-    volume = 0
     mode = MODE_MENU
+    mpd = None
 
-    def __init__(self):
+    def __init__(self, mpd):
         '''
         Constructor
         '''
-
-    def setVolume(self, volume):
-        self.volume = volume
+        self.mpd = mpd
 
     def setMode(self, mode):
         self.mode = mode

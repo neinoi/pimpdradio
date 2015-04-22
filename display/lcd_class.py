@@ -111,10 +111,10 @@ class Lcd(ScreenBase):
     timerLine1 = None
 
     # Initialise for revision 2 boards
-    def init(self):
+    def __init__(self, mpd):
         
         # LED outputs
-        ScreenBase.__init__(self)
+        ScreenBase.__init__(self, mpd)
 
         GPIO.setwarnings(False)            # Disable warnings
         GPIO.setmode(GPIO.BCM)            # Use BCM GPIO numbers
@@ -201,23 +201,16 @@ class Lcd(ScreenBase):
             ret = ret.rjust(LCD_WIDTH, ' ')
         return ret
 
-    def setVolume(self, volume):
-        self.volume = volume
-        ligne = strftime("%d/%m %H:%M   Vol " + str(volume), localtime())
-        self.setLine1(ligne)
+    def _refreshLine1(self, tempo=-1):
+        status = self.mpd.status()
 
-    def _refreshLine1(self, tempo=10.0):
-#         status = self.mpd.status()
-#         print status 
-#         ligne = strftime("%d/%m %H:%M   Vol " + str(status['volume']), localtime())
-#         state = status['state']
-#         print ' => state : {0}'.format(state)
-#         if state != 'play':
-#             ligne = strftime("%d/%m %H:%M   " + state, localtime())
-#             
-#         print 'Ligne : {0}'.format(ligne)    
+        ligne = strftime("%d/%m %H:%M   Vol " + status['volume'], localtime())
+        state = status['state']
         
-        ligne = strftime("%d/%m %H:%M   Vol " + str(self.volume), localtime())
+        if state != 'play':
+            ligne = strftime("%d/%m %H:%M   " + state, localtime())
+             
+        #ligne = strftime("%d/%m %H:%M   Vol " + status['volume'], localtime())
         self.setLine1(ligne)
         
         if tempo > 0:
