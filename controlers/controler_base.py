@@ -39,20 +39,20 @@ class Controler:
         try:
             ret = cmd
         except:
-            if self.connect(self.mpdport):
+            if self.connect():
                 ret = cmd
         return ret
 
     # Connect to MPD
-    def connect(self, port):
+    def connect(self):
         connection = False
         retry = 2
         while retry > 0:
             self.mpd = MPDClient()    # Create the MPD client
-            try:
+            try:                
                 self.mpd.timeout = 10
                 self.mpd.idletimeout = None
-                self.mpd.connect("localhost", port)
+                self.mpd.connect(self.config.getMpdHost(), self.config.getMpdPort())
 
                 connection = True
                 retry = 0
@@ -90,6 +90,9 @@ class Controler:
 
     def tunerClickUp(self):
         print "tunerClickUp NotImplementedError"
+        
+    def stop(self):
+        raise Exception('Controler.stop() must be implemented')
 
     def getVolume(self, refresh=False):
         if self.currentVolume is None or self.currentVolume == 0:
@@ -114,10 +117,10 @@ class Controler:
         self.setVolume(self.getVolume() - 5)
 
     def volumeClickDown(self):
-        print "columeClickDown NotImplementedError"
+        print "volumeClickDown NotImplementedError"
 
     def volumeClickUp(self):
-        print "volumeClickUp NotImplementedError"
+        self.mpd.pause()
 
     def setVolume(self, volume):
         if volume > self.config.getMaxVolume():

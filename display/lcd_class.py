@@ -112,6 +112,7 @@ class Lcd(ScreenBase):
 
     # Initialise for revision 2 boards
     def init(self):
+        
         # LED outputs
         ScreenBase.__init__(self)
 
@@ -206,10 +207,22 @@ class Lcd(ScreenBase):
         self.setLine1(ligne)
 
     def _refreshLine1(self, tempo=10.0):
+#         status = self.mpd.status()
+#         print status 
+#         ligne = strftime("%d/%m %H:%M   Vol " + str(status['volume']), localtime())
+#         state = status['state']
+#         print ' => state : {0}'.format(state)
+#         if state != 'play':
+#             ligne = strftime("%d/%m %H:%M   " + state, localtime())
+#             
+#         print 'Ligne : {0}'.format(ligne)    
+        
         ligne = strftime("%d/%m %H:%M   Vol " + str(self.volume), localtime())
         self.setLine1(ligne)
-        self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])
-        self.timerLine1.start()
+        
+        if tempo > 0:
+            self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])
+            self.timerLine1.start()
 
     def _refresh(self, tempo=0.5):
 

@@ -83,6 +83,10 @@ class MenuControler(Controler):
     def tunerClickUp(self):
         self.options[self.current][1](self.options[self.current][2])
 
+    def volumeClickUp(self):
+        if self.previousControler is not None:
+            self.rootControler.setControler(self.previousControler)
+
     def refresh(self):
         # self.lcd.clear()
         self._affOptions()

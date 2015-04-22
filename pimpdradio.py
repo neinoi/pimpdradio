@@ -45,7 +45,6 @@ lcd = Lcd()
 mpd = MPDClient()    # Create the MPD client
 mpd.connect(config.getMpdHost(), config.getMpdPort())
 
-# lcd.init(config.getBoardRevision(), tempo)
 lcd.init()
 lcd.setWidth(config.getLcdWidth())
 
@@ -155,14 +154,13 @@ if __name__ == "__main__":
         if 'start' == sys.argv[1]:
             daemon.start()
         elif 'stop' == sys.argv[1]:
-            os.system("service mpd stop")
             daemon.stop()
         elif 'restart' == sys.argv[1]:
             daemon.restart()
         elif 'status' == sys.argv[1]:
             daemon.status()
         elif 'version' == sys.argv[1]:
-            print "Version " + radio.getVersion()
+            print "Version 0.1"
         else:
             print "Unknown command: " + sys.argv[1]
             sys.exit(2)

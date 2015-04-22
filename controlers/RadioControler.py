@@ -8,7 +8,7 @@ Created on 4 janv. 2015
 '''
 
 import os
-import time
+import threading
 
 from menucontroler_base import MenuControler
 from RadioDisplay import RadioDisplay
@@ -24,7 +24,6 @@ class RadioControler(MenuControler):
     playlist = []
 
     def __init__(self, config, lcd, mpd, rootControler):
-
         # Test si une radio est en cours de lecture …
         radioEncours = False
         mpdFile = ''
@@ -43,9 +42,10 @@ class RadioControler(MenuControler):
 
         if radioEncours and len(mpd.playlistfind('file', mpdFile)) > 0:
             lastPos = int(mpd.playlistfind('file', mpdFile)[0]['pos'])
-            self.choixRadio(lastPos)
+            threading.Timer(0.1, self.choixRadio, [lastPos]).start()
 
     def choixRadio(self, numRadio):
+        #print 'RadioControler..choixRadio'
         self.mpd.play(numRadio)
         self.rootControler.setControler(
             RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd,
@@ -53,6 +53,7 @@ class RadioControler(MenuControler):
 
     # Load radio stations
     def loadStations(self, mpd, playlistsDir):
+        #print 'RadioControler..loadStations'
         self.execMpc(mpd.clear())
 
         dirList = os.listdir(playlistsDir)
@@ -71,6 +72,7 @@ class RadioControler(MenuControler):
 
     # Create list of tracks or stations
     def createPlayList(self):
+        #print 'RadioControler..createPlayList'
         self.playlist = []
         num = 0
         line = ""
@@ -83,3 +85,6 @@ class RadioControler(MenuControler):
             # line = translate.escape(line)
             self.playlist.append((line, self.choixRadio, num))
             num = num + 1
+
+    def stop(self):
+        pass

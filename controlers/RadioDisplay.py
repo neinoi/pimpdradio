@@ -8,7 +8,6 @@ Created on 4 janv. 2015
 '''
 
 import threading
-
 from controler_base import Controler
 
 
@@ -23,9 +22,11 @@ class RadioDisplay(Controler):
     l4 = ''
     radioTitle = ''
     radioName = ''
+    plId = None
 
     def __init__(self, nomRadio, config, lcd, mpd,
                  rootControler, previousControler):
+        #print 'RadioDisplay..__init__'
         Controler.__init__(self, config, lcd, mpd,
                            rootControler, previousControler)
 
@@ -36,17 +37,24 @@ class RadioDisplay(Controler):
         self.timerRefresh.start()
 
     def tunerClickDown(self):
+        #print 'RadioDisplay..tunerClickDown'
         pass
 
     def tunerClickUp(self):
-        self.timerContinue = False
-        try:
-            self.timerRefresh.cancel()
-        except:
-            pass
+        #print 'RadioDisplay..tunerClickUp'
         self.rootControler.setControler(self.previousControler)
 
+    def volumeClickUp(self):
+        if self.plId is None:
+            self.plId = int(self.mpd.currentsong()['id'])
+            self.mpd.stop()
+        else:
+            self.mpd.playid(self.plId)
+            self.plId = None
+        self.lcd._refreshLine1()
+
     def refresh(self):
+        #print 'RadioDisplay..refresh'
 
         try:
             curSong = self.mpd.currentsong()
@@ -61,8 +69,6 @@ class RadioDisplay(Controler):
 
             try:
                 self.l2 = curSong['name']
-                # if len(self.l2) > 20:
-                #    self.l2 = self.l2[:20]
             except:
                 pass
 
@@ -88,8 +94,16 @@ class RadioDisplay(Controler):
         self.lcd.setLine4(self.l4, 'center')
 
     def _refresh(self, tempo=1):
+        #print 'RadioDisplay.._refresh'
         if self.timerContinue:
             self.refresh()
 
             self.timerRefresh = threading.Timer(tempo, self._refresh, [tempo])
             self.timerRefresh.start()
+            
+    def stop(self):        
+        self.timerContinue = False
+        try:
+            self.timerRefresh.cancel()
+        except:
+            pass

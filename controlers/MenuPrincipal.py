@@ -52,3 +52,9 @@ class MenuPrincipal(MenuControler):
 
         except:
             pass
+        
+    def stop(self):
+        pass
+    
+    def volumeClickUp(self):
+        pass

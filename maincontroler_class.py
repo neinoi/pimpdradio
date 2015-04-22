@@ -21,19 +21,18 @@ from encoders.encoder_class import Encoder
 class MainControler(Controler):
 
     currentControler = None
-    timerRefresh = None
     ready = False
     startupSong = None
 
     def __init__(self, config, lcd, mpd):
         Controler.__init__(self, config, lcd, mpd, None)
 
-        self.currentControler = MenuPrincipal(config, lcd, mpd, self)
+        self.setControler(MenuPrincipal(config, lcd, mpd, self))
         lcd.setVolume(self.getVolume())
 
     # This is the callback routine to handle tuner events
     def tuner_event(self, event):
-        if self.ready:
+        if self.ready and self.currentControler is not None:
             if event == Encoder.CLOCKWISE:
                 self.currentControler.tunerUp()
             elif event == Encoder.ANTICLOCKWISE:
@@ -45,7 +44,7 @@ class MainControler(Controler):
 
     # This is the callback routine to handle volume events
     def volume_event(self, event):
-        if self.ready:
+        if self.ready and self.currentControler is not None:
             if event == Encoder.CLOCKWISE:
                 self.currentControler.volumeUp()
             elif event == Encoder.ANTICLOCKWISE:
@@ -56,8 +55,14 @@ class MainControler(Controler):
                 self.currentControler.volumeClickDown()
 
     def setControler(self, newControler):
-        self.currentControler = newControler
-        self.currentControler.refresh()
+        #print 'MainControler..current : {0}'.format(self.currentControler)
+        #print 'MainControler..new : {0}'.format(newControler)
+        if self.currentControler is not None:
+            self.currentControler.stop()
+            
+        if newControler is not None:
+            self.currentControler = newControler
+            self.currentControler.refresh()
 
     def setReady(self, isReady):
         self.ready = isReady
@@ -67,4 +72,6 @@ class MainControler(Controler):
         if isReady:
             self.currentControler.testStatus()
 
+    def stop(self):
+        pass
 # End of MainControler class

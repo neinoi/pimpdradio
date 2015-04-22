@@ -28,3 +28,6 @@ class SystemMenu(MenuControler):
 
     def shutdown(self):
         self.execCommand("sudo halt")
+
+    def stop(self):
+        pass
