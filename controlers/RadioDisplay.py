@@ -27,7 +27,7 @@ class RadioDisplay(Controler):
 
     def __init__(self, nomRadio, config, lcd, mpd,
                  rootControler, previousControler):
-        #print 'RadioDisplay..__init__'
+        logging.debug('RadioDisplay..__init__')
         Controler.__init__(self, config, lcd, mpd,
                            rootControler, previousControler)
 
@@ -38,11 +38,11 @@ class RadioDisplay(Controler):
         self.timerRefresh.start()
 
     def tunerClickDown(self):
-        #print 'RadioDisplay..tunerClickDown'
+        logging.debug('RadioDisplay..tunerClickDown')
         pass
 
     def tunerClickUp(self):
-        #print 'RadioDisplay..tunerClickUp'
+        logging.debug('RadioDisplay..tunerClickUp')
         self.rootControler.setControler(self.previousControler)
 
     def volumeClickUp(self):
@@ -55,7 +55,7 @@ class RadioDisplay(Controler):
         self.lcd._refreshLine1()
 
     def refresh(self):
-        #print 'RadioDisplay..refresh'
+        logging.debug('RadioDisplay..refresh')
 
         try:
             curSong = self.execMpc(self.mpd.currentsong())
@@ -95,7 +95,7 @@ class RadioDisplay(Controler):
         self.lcd.setLine4(self.l4, 'center')
 
     def _refresh(self, tempo=1):
-        #print 'RadioDisplay.._refresh'
+        logging.debug('RadioDisplay.._refresh')
         if self.timerContinue:
             self.refresh()
 

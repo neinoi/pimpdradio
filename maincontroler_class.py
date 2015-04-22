@@ -12,6 +12,7 @@
 # The authors shall not be liable for any loss or damage however caused.
 #
 
+import logging
 
 from controlers.controler_base import Controler
 from controlers.MenuPrincipal import MenuPrincipal
@@ -55,8 +56,8 @@ class MainControler(Controler):
                 self.currentControler.volumeClickDown()
 
     def setControler(self, newControler):
-        #print 'MainControler..current : {0}'.format(self.currentControler)
-        #print 'MainControler..new : {0}'.format(newControler)
+        logging.debug('MainControler..current : {0}'.format(self.currentControler))
+        logging.debug('MainControler..new : {0}'.format(newControler))
         if self.currentControler is not None:
             self.currentControler.stop()
             

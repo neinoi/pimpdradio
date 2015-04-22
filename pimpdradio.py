@@ -49,18 +49,18 @@ mpd.connect(config.getMpdHost(), config.getMpdPort())
 lcd = Lcd(config, mpd)
 lcd.setWidth(config.getLcdWidth())
 
-print 'Initializing main controller ...'
+logging.info('Initializing main controller ...')
 controler = MainControler(config, lcd, mpd)
 time.sleep(5)
 
-print 'Initializing tuner controls ...'
+logging.info('Initializing tuner controls ...')
 tunerknob = RotaryEncoder(config.getSwitchMenuUp(),
                           config.getSwitchMenuDown(),
                           config.getSwitchMenuButton(),
                           controler.tuner_event)
 time.sleep(5)
 
-print 'Initializing volume controls ...'
+logging.info('Initializing volume controls ...')
 volumeknob = RotaryEncoder(config.getSwitchVolumeUp(),
                            config.getSwitchVolumeDown(),
                            config.getSwitchVolumeButton(),
@@ -100,12 +100,10 @@ class MyDaemon(Daemon):
 
         if not pid:
             message = "radiod status: not running"
-            log.message(message, log.INFO)
-            print message
+            logging.info(message)
         else:
             message = "radiod running pid " + str(pid)
-            log.message(message, log.INFO)
-            print message
+            logging.info(message)
         return
 
 # End of class overrides

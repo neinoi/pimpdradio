@@ -6,7 +6,7 @@ Created on 22 avr. 2015
 
 import logging
 import time
-from mpd import MPDClient
+from mpd import MPDClient, MPDError, CommandError
 
 class MPDControler:
     '''
@@ -32,8 +32,13 @@ class MPDControler:
             if self.connect():
                 try:
                     ret = cmd
-                except Exception as e:
+                except MPDError as e:
                     logging.error('MPD error on #{0} : {1}'.format(cmd,str(e)))
+                except CommandError as e:
+                    logging.error('MPD Command error on #{0} : {1}'.format(cmd,str(e)))
+                except:
+                    logging.error('Exception on #{0} : {1}'.format(cmd,str(e)))
+                    
             else:
                 logging.error('MPD reconnection failed')
         return ret

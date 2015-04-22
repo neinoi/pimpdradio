@@ -58,6 +58,7 @@ class MenuPrincipal(MenuControler):
                 time.sleep(1)
                 self.testStatus(False)
             else:
+                self.rootControler.setControler(self)
                 logging.warning('testStatus error : {0}'.format(str(e)))
             
         

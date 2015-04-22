@@ -46,7 +46,7 @@ class RadioControler(MenuControler):
             threading.Timer(0.1, self.choixRadio, [lastPos]).start()
 
     def choixRadio(self, numRadio):
-        #print 'RadioControler..choixRadio'
+        logging.debug('RadioControler..choixRadio')
         try:
             self.execMpc(self.mpd.play(numRadio))
             self.rootControler.setControler(
@@ -58,7 +58,7 @@ class RadioControler(MenuControler):
 
     # Load radio stations
     def loadStations(self, mpd, playlistsDir):
-        #print 'RadioControler..loadStations'
+        logging.debug('RadioControler..loadStations')
         self.execMpc(mpd.clear())
 
         dirList = os.listdir(playlistsDir)
@@ -77,7 +77,7 @@ class RadioControler(MenuControler):
 
     # Create list of tracks or stations
     def createPlayList(self):
-        #print 'RadioControler..createPlayList'
+        logging.debug('RadioControler..createPlayList')
         self.playlist = []
         num = 0
         line = ""
