@@ -19,8 +19,8 @@ class MenuControler(Controler):
     # Tableau de tuples (ligne à afficher,fonction à lancer,paramètres)
     options = []
 
-    def __init__(self, config, lcd, mpd, rootControler, options):
-        Controler.__init__(self, config, lcd, mpd, rootControler)
+    def __init__(self, config, lcd, rootControler, options):
+        Controler.__init__(self, config, lcd, rootControler)
 
         self.options = options
         self.current = 0

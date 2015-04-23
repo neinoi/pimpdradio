@@ -31,7 +31,6 @@ import logging
 from utils.radio_daemon import Daemon
 from display.lcd_class import Lcd
 from utils.config_class import Config
-from mpd import MPDClient
 
 from encoders.gaugette_class import RotaryEncoder
 # from encoders.rotary_class import RotaryEncoder
@@ -39,18 +38,14 @@ from encoders.gaugette_class import RotaryEncoder
 from maincontroler_class import MainControler
 
 config = Config('/etc/pimpdradio.cfg')
-logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)s - %(message)s')
 
 tempo = 0.2
 
-mpd = MPDClient()    # Create the MPD client
-mpd.connect(config.getMpdHost(), config.getMpdPort())
-
-lcd = Lcd(config, mpd)
-lcd.setWidth(config.getLcdWidth())
+lcd = Lcd(config)
 
 logging.info('Initializing main controller ...')
-controler = MainControler(config, lcd, mpd)
+controler = MainControler(config, lcd)
 time.sleep(5)
 
 logging.info('Initializing tuner controls ...')

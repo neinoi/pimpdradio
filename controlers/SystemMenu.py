@@ -15,13 +15,13 @@ class SystemMenu(MenuControler):
     classdocs
     '''
 
-    def __init__(self, config, lcd, mpd, rootControler):
+    def __init__(self, config, lcd, rootControler):
 
         # Tableau de tuples (id,ligne à afficher,fonction à lancer)
         options = [("Reboot", self.reboot, None),
                    ("Shutdown", self.shutdown, None)]
 
-        MenuControler.__init__(self, config, lcd, mpd, rootControler, options)
+        MenuControler.__init__(self, config, lcd, rootControler, options)
 
     def reboot(self):
         self.execCommand("sudo reboot")

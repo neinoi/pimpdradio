@@ -23,9 +23,9 @@ class Controler(MPDControler):
     previousControler = None
     currentVolume = None
 
-    def __init__(self, config, lcd, mpd,
+    def __init__(self, config, lcd,
                  rootControler, previousControler=None):
-        MPDControler.__init__(self, config, mpd)
+        MPDControler.__init__(self, config)
         
         self.lcd = lcd
         self.rootControler = rootControler
@@ -55,9 +55,6 @@ class Controler(MPDControler):
     def tunerClickUp(self):
         logging.debug("tunerClickUp NotImplementedError")
         
-    def stop(self):
-        raise Exception('Controler.stop() must be implemented')
-
     def getVolume(self, refresh=False):
         if self.currentVolume is None or self.currentVolume == 0:
             volume = 0

@@ -25,14 +25,15 @@ class MainControler(Controler):
     ready = False
     startupSong = None
 
-    def __init__(self, config, lcd, mpd):
-        Controler.__init__(self, config, lcd, mpd, None)
+    def __init__(self, config, lcd):
+        Controler.__init__(self, config, lcd, None)
 
-        self.setControler(MenuPrincipal(config, lcd, mpd, self))
+        self.setControler(MenuPrincipal(config, lcd, self))
         #lcd._refreshLine1()
 
     # This is the callback routine to handle tuner events
     def tuner_event(self, event):
+        logging.info('event')
         if self.ready and self.currentControler is not None:
             if event == Encoder.CLOCKWISE:
                 self.currentControler.tunerUp()
@@ -45,6 +46,7 @@ class MainControler(Controler):
 
     # This is the callback routine to handle volume events
     def volume_event(self, event):
+        logging.info('event')
         if self.ready and self.currentControler is not None:
             if event == Encoder.CLOCKWISE:
                 self.currentControler.volumeUp()

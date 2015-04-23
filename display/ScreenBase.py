@@ -20,11 +20,11 @@ class ScreenBase(MPDControler):
     '''
     mode = MODE_MENU
 
-    def __init__(self, config, mpd):
+    def __init__(self, config):
         '''
         Constructor
         '''
-        MPDControler.__init__(self, config, mpd)
+        MPDControler.__init__(self, config)
 
     def setMode(self, mode):
         self.mode = mode

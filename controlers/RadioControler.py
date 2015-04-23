@@ -13,6 +13,7 @@ import threading
 
 from menucontroler_base import MenuControler
 from RadioDisplay import RadioDisplay
+from mpd import MPDClient
 
 Mpc = "/usr/bin/mpc"    # Music Player Client
 
@@ -24,7 +25,7 @@ class RadioControler(MenuControler):
     '''
     playlist = []
 
-    def __init__(self, config, lcd, mpd, rootControler):
+    def __init__(self, config, lcd, rootControler):
         # Test si une radio est en cours de lecture …
         radioEncours = False
         mpdFile = ''
@@ -35,11 +36,14 @@ class RadioControler(MenuControler):
         except Exception as e:
             logging.warning('testStatus error : {0}'.format(str(e)))
 
+        mpd = MPDClient()    # Create the MPD client
+        mpd.connect(config.getMpdHost(), config.getMpdPort())
+
         self.loadStations(mpd, config.getPlaylistsDir())
         self.createPlayList()
 
         MenuControler.__init__(
-            self, config, lcd, mpd, rootControler, self.playlist)
+            self, config, lcd, rootControler, self.playlist)
 
         if radioEncours and len(mpd.playlistfind('file', mpdFile)) > 0:
             lastPos = int(mpd.playlistfind('file', mpdFile)[0]['pos'])
@@ -48,12 +52,14 @@ class RadioControler(MenuControler):
     def choixRadio(self, numRadio):
         logging.debug('RadioControler..choixRadio')
         try:
-            self.execMpc(self.mpd.play(numRadio))
+            self.mpd.play(numRadio)
             self.rootControler.setControler(
                 RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd,
-                             self.mpd, self.rootControler, self))
+                             self.rootControler, self))
         except Exception as e:
-            logging.warning('choixRadio error : {0}'.format(str(e)))
+            logging.error(str(e))
+            self.reconnect()
+            self.choixRadio(numRadio)
         
 
     # Load radio stations
