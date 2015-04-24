@@ -23,14 +23,12 @@ class Controler(MPDControler):
     previousControler = None
     currentVolume = None
 
-    def __init__(self, config, lcd,
-                 rootControler, previousControler=None):
+    def __init__(self, config, lcd, rootControler, previousControler=None):
         MPDControler.__init__(self, config)
         
         self.lcd = lcd
         self.rootControler = rootControler
         self.previousControler = previousControler
-
 
     # Execute system command
     def execCommand(self, cmd):

@@ -23,23 +23,29 @@ class MPDControler:
         self.config = config
         
         self.connect()
-#         self.mpd = MPDClient()    # Create the MPD client
-#         #self.mpd.timeout = 10
-#         self.mpd.idletimeout = None
-#         self.mpd.connect(config.getMpdHost(), config.getMpdPort())
 
         
     # Execute MPC command using mpd library - Connect client if required
     def execMpc(self, cmd):
+        #print 'execMpc - 1 - mpd : {0}'.format(self.mpd)
+        
         if self.mpd is None:
             self.connect()
         
+        #print 'execMpc - 2 - mpd : {0}'.format(self.mpd)
+        
         try:
             ret = cmd
+            #print 'execMpc - 3 - ret : {0}'.format(ret)
+            
         except:
+            #print 'execMpc - 4 - mpd : {0}'.format(self.mpd)
             self.reconnect()
+            #print 'execMpc - 5 - mpd : {0}'.format(self.mpd)
             self.execMpc(cmd)
                 
+        #print 'execMpc - 6 - ret : {0}'.format(ret)
+
         return ret
 
     def reconnect(self):
@@ -74,7 +80,7 @@ class MPDControler:
         return connection        
     
     def stop(self):
-        logging.info("MPD stop")
+        logging.warning("MPD stop")
         self.mpd.close()
         self.mpd.disconnect()
     
