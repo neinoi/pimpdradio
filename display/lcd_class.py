@@ -138,7 +138,7 @@ class Lcd(ScreenBase):
         self.timerRefresh = threading.Timer(5.0, self._refresh, [0.2])
         self.timerRefresh.start()
 
-        self.timerLine1 = threading.Timer(5.0, self._refreshLine1, [5.0])
+        self.timerLine1 = threading.Timer(5.0, self._refreshLine1, [1.0])
         self.timerLine1.start()
 
         return
@@ -199,18 +199,18 @@ class Lcd(ScreenBase):
         return ret
 
     def _refreshLine1(self, tempo=-1):
+        status = self.getStatus()
         try:
-            status = self.execMpc(self.mpd.status())
-    
             ligne = strftime("%d/%m %H:%M   Vol " + status['volume'], localtime())
-            state = status['state']
             
+            state = status['state']
             if state != 'play':
                 ligne = strftime("%d/%m %H:%M   " + state, localtime())
                  
             self.setLine1(ligne)
         except Exception as e:
-            logging.warning('LCD refresh error : {0}'.format(str(e)))
+            logging.warning('LCD refresh error : {0},{1}'.format(status, str(e)))
+            self.reconnect()
             
         if tempo > 0:
             self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])

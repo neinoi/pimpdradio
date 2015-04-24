@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+#
 '''
 Created on 22 avr. 2015
 
@@ -8,13 +11,15 @@ import logging
 import time
 from mpd import MPDClient
 
+mpdCli = None
+
 class MPDControler:
     '''
     classdocs
     '''
 
-    mpd = None
     config = None
+    mpd = None
 
     def __init__(self, config):
         '''
@@ -25,43 +30,36 @@ class MPDControler:
         self.connect()
 
         
-    # Execute MPC command using mpd library - Connect client if required
-    def execMpc(self, cmd):
-        #print 'execMpc - 1 - mpd : {0}'.format(self.mpd)
-        
+    def check(self):
         if self.mpd is None:
             self.connect()
+    
         
-        #print 'execMpc - 2 - mpd : {0}'.format(self.mpd)
-        
+    # Execute MPC command using mpd library - Connect client if required
+    def execMpc(self, cmd):
         try:
             ret = cmd
-            #print 'execMpc - 3 - ret : {0}'.format(ret)
-            
         except:
-            #print 'execMpc - 4 - mpd : {0}'.format(self.mpd)
             self.reconnect()
-            #print 'execMpc - 5 - mpd : {0}'.format(self.mpd)
             self.execMpc(cmd)
                 
-        #print 'execMpc - 6 - ret : {0}'.format(ret)
-
         return ret
 
     def reconnect(self):
-        time.sleep(0.5)
+        time.sleep(0.1)
         logging.info('Reconnection ... {0}'.format(self.connect()))
 
     # Connect to MPD
     def connect(self):
         connection = False
+        logging.info('MPD Connection …')
         retry = 2
         while retry > 0:
-            self.mpd = MPDClient()    # Create the MPD client
+            mpdCli = MPDClient()    # Create the MPD client
             try:               
-                self.mpd.timeout = 10 
-                self.mpd.idletimeout = None
-                self.mpd.connect(self.config.getMpdHost(), self.config.getMpdPort())
+                mpdCli.timeout = 10 
+                mpdCli.idletimeout = None
+                mpdCli.connect(self.config.getMpdHost(), self.config.getMpdPort())
 
                 connection = True
                 retry = 0
@@ -77,10 +75,45 @@ class MPDControler:
 #                 time.sleep(2)    # Give MPD time to restart
                 retry -= 1
 
+        if connection:
+            self.mpd = mpdCli
+        else:
+            self.mpd = None
+        logging.info(connection)
         return connection        
     
+    def getStatus(self, prop=None):
+        self.check()
+        if prop is None:
+            return self.execMpc(self.mpd.status())
+        else:
+            return self.execMpc(self.mpd.status()[prop])
+    
+    def getCurrentSong(self, prop=None):
+        self.check()
+
+        if prop is None:
+            return self.execMpc(self.mpd.currentsong())
+        else:
+            return self.execMpc(self.mpd.currentsong()[prop])
+        
+    def pause(self):
+        self.check()
+        self.execMpc(self.mpd.pause())
+    
+    def setVolume(self, volume):
+        self.check()
+        self.execMpc(self.mpd.setvol(volume))
+    
+    def play(self, id):
+        self.check()
+        self.execMpc(self.mpd.play(id))
+        
+    def playid(self, id):
+        self.check()
+        self.execMpc(self.mpd.playid(id))        
+    
     def stop(self):
-        logging.warning("MPD stop")
-        self.mpd.close()
-        self.mpd.disconnect()
+        self.check()
+        self.execMpc(self.mpd.stop())
     

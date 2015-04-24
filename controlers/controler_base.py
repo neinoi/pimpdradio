@@ -57,7 +57,7 @@ class Controler(MPDControler):
         if self.currentVolume is None or self.currentVolume == 0:
             volume = 0
             try:
-                volume = int(self.mpd.status()['volume'])
+                volume = int(self.getStatus('volume'))
             except:
                 logging.warning('MPD getVolume failed')
                 volume = 0
@@ -67,36 +67,27 @@ class Controler(MPDControler):
         return self.currentVolume
 
     def volumeUp(self):
-        self.setVolume(self.getVolume() + 5)
+        self.changeVolume(self.getVolume() + 5)
 
     def volumeDown(self):
-        self.setVolume(self.getVolume() - 5)
+        self.changeVolume(self.getVolume() - 5)
 
     def volumeClickDown(self):
         logging.debug("volumeClickDown NotImplementedError")
 
     def volumeClickUp(self):
-        self.execMpc(self.mpd.pause())
+        self.pause()
 
-    def setVolume(self, volume):
+    def changeVolume(self, volume):
         if volume > self.config.getMaxVolume():
             volume = self.config.getMaxVolume()
         elif volume < 0:
             volume = 0
         self.currentVolume = volume
 
-        self.execMpc(self.mpd.setvol(volume))
+        self.setVolume(volume)
+        
         self.lcd._refreshLine1()
-
-    # Get current song information (Only for use within this module)
-    def getCurrentSong(self):
-        currentsong = ''
-        try:
-            currentsong = self.execMpc(self.mpd.currentsong())
-        except:
-            logging.error('Cannot get current song')            
-            
-        return currentsong
 
     # Get the title of the currently playing station or track from mpd
     def getCurrentTitle(self):

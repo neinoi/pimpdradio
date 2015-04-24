@@ -52,7 +52,7 @@ class RadioControler(MenuControler):
     def choixRadio(self, numRadio):
         logging.debug('RadioControler..choixRadio')
         try:
-            self.mpd.play(numRadio)
+            self.play(numRadio)
             self.rootControler.setControler(
                 RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd,
                              self.rootControler, self))
