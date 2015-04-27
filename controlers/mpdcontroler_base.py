@@ -105,13 +105,13 @@ class MPDControler:
         self.check()
         self.execMpc(self.mpd.setvol(volume))
     
-    def play(self, id):
+    def play(self, plid):
         self.check()
-        self.execMpc(self.mpd.play(id))
+        self.execMpc(self.mpd.play(plid))
         
-    def playid(self, id):
+    def playid(self, plid):
         self.check()
-        self.execMpc(self.mpd.playid(id))        
+        self.execMpc(self.mpd.playid(plid))        
     
     def stop(self):
         self.check()
