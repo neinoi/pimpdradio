@@ -75,7 +75,7 @@ class MainControler(Controler):
 
         if isReady:
             self.currentControler.testStatus()
-            #self.mpdService.run()
+            self.mpdService.run()
 
     def stop(self):
         pass

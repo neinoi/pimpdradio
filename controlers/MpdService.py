@@ -9,9 +9,10 @@ Created on 22 avr. 2015
 
 import logging
 import time
+import socket
+import errno
 
 from threading import Thread 
-import threading
 
 from mpd import MPDClient
 
@@ -21,15 +22,17 @@ class MPDService(Thread):
     '''
 
     config = None
-    mpd = None
+    mpdCommands = None
+    mpdListener = None
+    
     eventsCallBacks = {}
     
-    noidle = False
+    #noidle = False
 
     currentSong = None
     playlistInfo = None
     status = None
-
+    plId = None
     Terminated = False
 
     def __init__(self, config):
@@ -40,15 +43,16 @@ class MPDService(Thread):
         
         self.config = config
         
-        self.connect()
-        self.currentSong = self.mpd.currentsong()
-        self.playlistInfo = self.mpd.playlistinfo()
-        self.status = self.mpd.status()
-        
-        #logging.debug('init : currentSong : {0}'.format(self.currentSong))
-        #logging.debug('init : playlistInfo : {0}'.format(self.playlistInfo))
-        #logging.debug('init : status : {0}'.format(self.status))
+        self.mpdCommands = self.connect()
+        self.mpdListener = self.connect()
 
+        self.currentSong = self.mpdCommands.currentsong()
+        self.playlistInfo = self.mpdCommands.playlistinfo()
+        self.status = self.mpdCommands.status()
+        
+        logging.debug('init : currentSong : {0}'.format(self.currentSong))
+        logging.debug('init : playlistInfo : {0}'.format(self.playlistInfo))
+        logging.debug('init : status : {0}'.format(self.status))
             
     def run(self): 
         while not self.Terminated:
@@ -59,34 +63,68 @@ class MPDService(Thread):
     def stop(self): 
         self.Terminated = True        
         
-    def _check(self):
-        self.noidle = True
-        self.mpd.noidle()
-        
-    def _restart(self):
-        self.noidle = False
-        threading.Timer(0.1, self.waitForEvent, []).start()
-        
-        
     # Execute MPC command using mpd library - Connect client if required
-    def execMpc(self, cmd):
+    def execMpc(self, cmd, param = None):
+        logging.debug('Command : {0}({1}'.format(cmd, param))
+        
+        #self.noidle = True
+        #self.mpd.noidle()
+        
         try:
-            ret = cmd
-        except:
+            if param is None:
+                ret = cmd()
+            else:
+                ret = cmd(param)
+        except socket.error, e:
+            if isinstance(e.args, tuple):
+                logging.warning('errno is {0}'.format(e[0]))
+                if e[0] == errno.EPIPE:
+                    # remote peer disconnected
+                    logging.warning("Detected remote disconnect")
+                else:
+                    # determine and handle different error
+                    pass
+            else:
+                print "socket error ", e
+            time.sleep(0.5)
             self.reconnect()
-            self.execMpc(cmd)
-                
+            ret = self.execMpc(cmd, param)
+        except Exception as e:
+            logging.error("Error : {0}".format(e))
+            time.sleep(0.5)
+            self.reconnect()
+            ret = self.execMpc(cmd, param)
+        #else:
+            #self.noidle = False
+
+        #self.noidle = False
+
         return ret
 
+#         try:
+
+#         except IOError, e:
+#             # Hmmm, Can IOError actually be raised by the socket module?
+#             logging.warning('Got IOError: {0}'.format(e))
+
+
     def reconnect(self):
-        time.sleep(0.1)
-        logging.info('Reconnection ... {0}'.format(self.connect()))
+        logging.debug('-')
+        if self.mpdCommands is not None:
+            try:
+                self.mpdCommands.close()
+            except:
+                pass
+
+        self.mpdCommands = self.connect()
 
     # Connect to MPD
     def connect(self):
+        logging.debug('-')
         connection = False
         logging.info('MPD Connection …')
         retry = 2
+            
         mpdCli = None
         while retry > 0:
             mpdCli = MPDClient()    # Create the MPD client
@@ -98,7 +136,8 @@ class MPDService(Thread):
                 connection = True
                 retry = 0
             except:
-                time.sleep(0.5)
+                mpdCli = None
+                time.sleep(1)
                 # Wait for interrupt in the case of a shutdown
 #                 if retry < 2:
 #                     logging.warning('LCD service restart')
@@ -110,34 +149,40 @@ class MPDService(Thread):
                 retry -= 1
 
         if connection:
-            self.mpd = mpdCli
+            return mpdCli
         else:
-            self.mpd = None
-        logging.info(connection)
-        return connection        
-    
+            return None
+                
     def getStatus(self, prop=None):
-        
+        logging.debug('-')
         if prop is None:
             return self.status
         else:
             return self.status[prop]
     
     def getCurrentSong(self, prop=None):
+        logging.debug('-')
         if prop is None:
             return self.currentSong
         else:
             return self.currentSong[prop]
         
     def getPlaylistInfo(self):
+        logging.debug('-')
         return self.playlistInfo
 
-    def pause(self):
-        self._check()
-        self.execMpc(self.mpd.pause())
-        self._restart()
+    def pauseRestart(self):
+        logging.debug('-')
+        
+        if self.getStatus('state') == 'play':
+            self.plId = int(self.getCurrentSong('id'))            
+            self.execMpc(self.mpdCommands.pause)
+        elif self.plId is not None:
+            self.execMpc(self.mpdCommands.playid, self.plId)
+            self.plId = None
         
     def changeVolume(self, increment):
+        logging.debug('-')
         volume = 0
         try:
             volume = int(self.status['volume'])
@@ -154,63 +199,56 @@ class MPDService(Thread):
         self.setVolume(volume)
     
     def setVolume(self, volume):
-        logging.debug('1')
-        self._check()
-        logging.debug('2')
-        self.execMpc(self.mpd.setvol(volume))
-        logging.debug('3')
-        self._restart()
-        logging.debug('4')
+        logging.debug('-')
+        self.execMpc(self.mpdCommands.setvol, volume)
 
     def play(self, plid):
-        logging.debug('1')
-        self._check()
-        logging.debug('2')
-        self.execMpc(self.mpd.play(plid))
-        logging.debug('3')
-        self._restart()
+        logging.debug('-')
+
+        self.execMpc(self.mpdCommands.play, plid)
+
         
     def playid(self, plid):
-        self._check()
-        self.execMpc(self.mpd.playid(plid))        
-        self._restart()
+        logging.debug('playid({0})'.format(plid))
+
+        self.execMpc(self.mpdCommands.playid, plid)        
     
     def stopPlayer(self):
-        self._check()
-        self.execMpc(self.mpd.stop())
-        self._restart()
+        logging.debug('-')
+
+        self.execMpc(self.mpdCommands.stop)
+
     
     def waitForEvent(self):
-        logging.debug('Noidle ? {0}'.format(self.noidle))
+        #logging.debug('Noidle ? {0}'.format(self.noidle))
 
-        if not self.noidle:
-            logging.debug('idle ...')
-            try:
-                events = self.mpd.idle()
-    
-                logging.debug('events : {0}'.format(events))
-                
-                if 'player' in events:
-                    self.currentSong = self.mpd.currentsong()
+        #if not self.noidle:
+        try:
+            logging.debug('mpd.idle ...')
+            events = self.mpdListener.idle()
+
+            logging.debug('events : {0}'.format(events))
+            if 'player' in events:
+                self.currentSong = self.mpdListener.currentsong()
+             
+            if 'playlist'  in events:
+                self.playlistInfo = self.mpdListener.playlistinfo()
                  
-                if 'playlist'  in events:
-                    self.playlistInfo = self.mpd.playlistinfo()
-                     
-                if 'mixer'  in events:
-                    self.status = self.mpd.status()
-                
-                for evt in events:
-                    if evt in self.eventsCallBacks:
-                        callbacks = self.eventsCallBacks[evt]
-                        if callbacks is not None :
-                            for callback in callbacks:
-                                callback()
-            except Exception as e:
-                logging.error(e)
-            else:
-                self.waitForEvent()
-    
+            #if 'mixer'  in events:
+            self.status = self.mpdListener.status()
+            
+            for evt in events:
+                if evt in self.eventsCallBacks:
+                    callbacks = self.eventsCallBacks[evt]
+                    if callbacks is not None :
+                        for callback in callbacks:
+                            callback()
+
+        except Exception as e:
+            logging.error(e)
+            
     def registerCallBackFor(self, event, callback):
+        logging.debug('-')
         cb = (callback,)
         if event in self.eventsCallBacks:
             cb = self.eventsCallBacks[event] + cb

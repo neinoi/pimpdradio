@@ -56,9 +56,7 @@ class RadioControler(MenuControler):
     def choixRadio(self, numRadio):
         logging.debug('numRadio : {0}'.format(numRadio))
         try:
-            logging.debug('avant mpdService.play')
             self.mpdService.play(numRadio)
-            logging.debug('avant changement de controler')
             self.rootControler.setControler(
                 RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd,
                              self.mpdService, self.rootControler, self))

@@ -21,7 +21,6 @@ class RadioDisplay(Controler):
     l4 = ''
     radioTitle = ''
     radioName = ''
-    plId = None
 
     def __init__(self, nomRadio, config, lcd, mpdService, rootControler, previousControler):
         logging.debug('RadioDisplay..__init__')
@@ -41,13 +40,7 @@ class RadioDisplay(Controler):
         self.rootControler.setControler(self.previousControler)
 
     def volumeClickUp(self):
-        if self.plId is None:
-            self.plId = int(self.mpdService.getCurrentSong('id'))
-            self.mpdService.pause()
-        else:
-            self.mpdService.playid(self.plId)
-            self.plId = None
-
+        self.mpdService.pauseRestart()
 
     def refresh(self):
         if not self.continueDisplay:
