@@ -36,16 +36,18 @@ from encoders.gaugette_class import RotaryEncoder
 # from encoders.rotary_class import RotaryEncoder
 
 from maincontroler_class import MainControler
+from controlers.MpdService import MPDService
 
 config = Config('/etc/pimpdradio.cfg')
 logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)s - %(message)s')
 
-tempo = 0.2
+mpdService = MPDService(config)
 
-lcd = Lcd(config)
+tempo = 0.2
+lcd = Lcd(config, mpdService)
 
 logging.info('Initializing main controller ...')
-controler = MainControler(config, lcd)
+controler = MainControler(config, lcd, mpdService)
 time.sleep(5)
 
 logging.info('Initializing tuner controls ...')

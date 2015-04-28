@@ -25,10 +25,10 @@ class MainControler(Controler):
     ready = False
     startupSong = None
 
-    def __init__(self, config, lcd):
-        Controler.__init__(self, config, lcd, None)
+    def __init__(self, config, lcd, mpdService):
+        Controler.__init__(self, config, lcd, mpdService, None)
 
-        self.setControler(MenuPrincipal(config, lcd, self))
+        self.setControler(MenuPrincipal(config, lcd, mpdService, self))
         #lcd._refreshLine1()
 
     # This is the callback routine to handle tuner events
@@ -70,10 +70,12 @@ class MainControler(Controler):
     def setReady(self, isReady):
         self.ready = isReady
 
-        self.startupSong = self.getCurrentSong()
+        self.startupSong = self.mpdService.getCurrentSong()
+        logging.debug('Startup song : {0}'.format(self.startupSong))
 
         if isReady:
             self.currentControler.testStatus()
+            #self.mpdService.run()
 
     def stop(self):
         pass

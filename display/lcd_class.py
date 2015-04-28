@@ -32,6 +32,7 @@ from time import localtime, strftime
 
 import RPi.GPIO as GPIO
 from ScreenBase import ScreenBase
+from utils.constants import MPD_EVENT_MIXER
 
 
 # The wiring for the LCD is as follows:
@@ -111,10 +112,10 @@ class Lcd(ScreenBase):
     timerLine1 = None
 
     # Initialise for revision 2 boards
-    def __init__(self, config):
+    def __init__(self, config, mpdService):
         
         # LED outputs
-        ScreenBase.__init__(self, config)
+        ScreenBase.__init__(self, config, mpdService)
 
         self.width = config.getLcdWidth()
 
@@ -138,8 +139,10 @@ class Lcd(ScreenBase):
         self.timerRefresh = threading.Timer(5.0, self._refresh, [0.2])
         self.timerRefresh.start()
 
-        self.timerLine1 = threading.Timer(5.0, self._refreshLine1, [1.0])
+        self.timerLine1 = threading.Timer(5.0, self._refreshLine1, [60.0])
         self.timerLine1.start()
+        
+        mpdService.registerCallBackFor(MPD_EVENT_MIXER, self._refreshLine1)
 
         return
 
@@ -199,18 +202,17 @@ class Lcd(ScreenBase):
         return ret
 
     def _refreshLine1(self, tempo=-1):
-        status = self.getStatus()
+        status = self.mpdService.getStatus()
         try:
-            ligne = strftime("%d/%m %H:%M   Vol " + status['volume'], localtime())
+            ligne = strftime("%d/%m %H:%M   Vol " + self.mpdService.getStatus('volume'), localtime())
             
-            state = status['state']
+            state = self.mpdService.getStatus('state')
             if state != 'play':
                 ligne = strftime("%d/%m %H:%M   " + state, localtime())
                  
             self.setLine1(ligne)
         except Exception as e:
             logging.warning('LCD refresh error : {0},{1}'.format(status, str(e)))
-            self.reconnect()
             
         if tempo > 0:
             self.timerLine1 = threading.Timer(tempo, self._refreshLine1, [tempo])

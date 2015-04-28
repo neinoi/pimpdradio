@@ -14,17 +14,19 @@
 
 import logging
 import os
-from mpdcontroler_base import MPDControler
 
-class Controler(MPDControler):
+class Controler():
 
     lcd = None
     rootControler = None
     previousControler = None
-    currentVolume = None
 
-    def __init__(self, config, lcd, rootControler, previousControler=None):
-        MPDControler.__init__(self, config)
+    mpdService = None
+    config = None
+
+    def __init__(self, config, lcd, mpdService, rootControler, previousControler=None):
+        self.config = config
+        self.mpdService = mpdService
         
         self.lcd = lcd
         self.rootControler = rootControler
@@ -57,7 +59,7 @@ class Controler(MPDControler):
         if self.currentVolume is None or self.currentVolume == 0:
             volume = 0
             try:
-                volume = int(self.getStatus('volume'))
+                volume = int(self.mpdService.getStatus('volume'))
             except:
                 logging.warning('MPD getVolume failed')
                 volume = 0
@@ -67,34 +69,22 @@ class Controler(MPDControler):
         return self.currentVolume
 
     def volumeUp(self):
-        self.changeVolume(self.getVolume() + 5)
+        self.mpdService.changeVolume(5)
 
     def volumeDown(self):
-        self.changeVolume(self.getVolume() - 5)
+        self.mpdService.changeVolume(-5)
 
     def volumeClickDown(self):
         logging.debug("volumeClickDown NotImplementedError")
 
     def volumeClickUp(self):
-        self.pause()
-
-    def changeVolume(self, volume):
-        if volume > self.config.getMaxVolume():
-            volume = self.config.getMaxVolume()
-        elif volume < 0:
-            volume = 0
-        self.currentVolume = volume
-
-        self.setVolume(volume)
-        
-        self.lcd._refreshLine1()
+        self.mpdService.pause()
 
     # Get the title of the currently playing station or track from mpd
     def getCurrentTitle(self):
         title = ''
-        currentsong = self.getCurrentSong()
         try:
-            title = str(currentsong['title'])
+            title = str(self.mpdService.getCurrentSong()['title'])
         except:
             logging.warning('Current song : No title')
 
@@ -103,7 +93,7 @@ class Controler(MPDControler):
 
         genre = ''
         try:
-            genre = str(currentsong['genre'])
+            genre = str(self.mpdService.getCurrentSong()['genre'])
         except:
             logging.warning('Current song : No genre')
 

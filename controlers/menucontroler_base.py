@@ -6,6 +6,8 @@ Created on 1 janv. 2015
 
 @author: julien
 '''
+
+import logging
 from controler_base import Controler
 
 
@@ -19,16 +21,13 @@ class MenuControler(Controler):
     # Tableau de tuples (ligne à afficher,fonction à lancer,paramètres)
     options = []
 
-    def __init__(self, config, lcd, rootControler, options):
-        Controler.__init__(self, config, lcd, rootControler)
-
+    def __init__(self, config, lcd, mpdService, rootControler, options):
+        Controler.__init__(self, config, lcd, mpdService, rootControler)
         self.options = options
         self.current = 0
 
         self.lcd.clear()
         self._affOptions()
-
-        return
 
     def _affOptions(self):
         first = self.current - 1
