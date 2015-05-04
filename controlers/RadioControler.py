@@ -7,9 +7,9 @@ Created on 4 janv. 2015
 @author: julien
 '''
 
-import os
 import logging
 import threading
+import urllib2
 
 from menucontroler_base import MenuControler
 from RadioDisplay import RadioDisplay
@@ -36,23 +36,76 @@ class RadioControler(MenuControler):
         except Exception as e:
             logging.warning('init error : {0}'.format(str(e)))
 
+        logging.debug('Radio en cours : {0} : {1}'.format(radioEncours, mpdFile))
+
         mpd = MPDClient()    # Create the MPD client
         mpd.connect(config.getMpdHost(), config.getMpdPort())
+        
+        lastPos = self.loadRadiolist(mpd, config.getRadiolistFile(), mpdFile)
 
-        self.loadStations(mpd, config.getPlaylistsDir())
-        self.createPlayList(mpdService)
-
-        logging.debug('4')
+        logging.debug('lastpos : {0}'.format(lastPos))
+        
         MenuControler.__init__(
             self, config, lcd, mpdService, rootControler, self.playlist)
 
-        logging.debug('5')
-
-        if radioEncours and len(mpd.playlistfind('file', mpdFile)) > 0:
-            lastPos = int(mpd.playlistfind('file', mpdFile)[0]['pos'])
+        if radioEncours and lastPos > 0:
             threading.Timer(0.1, self.choixRadio, [lastPos]).start()
-        logging.debug('6')
+        
+    def loadRadiolist(self, mpd, radioListFile, lastRadio):
+        logging.debug('RadioControler..loadRadiolist')
 
+        mpd.clear()
+        self.playlist = []
+        num = 0
+        lastPos = -1
+
+        with open(radioListFile) as myfile:
+            for line in myfile:
+                line = line.strip()
+                if line[:1] != '#' and line != '':
+                    name, url = line.partition("=")[::2]
+                    logging.debug('load : [{0}] {1}'.format(name.strip(), url.strip()))
+
+                    self.playlist.append((name.strip(), self.choixRadio, num))
+                    if url.strip() == lastRadio:
+                        lastPos = num
+
+                    if url.strip().endswith('.m3u'):
+                        #playlist
+                        #Chargement de toutes les urls …
+
+                        for s in self.extractUrls(url):
+                            logging.debug('loading <{0}>'.format(s))
+                            mpd.addid(s.strip(), num)
+                            num += 1
+                    else:
+                        lastid = mpd.addid(url.strip(), num)
+                        logging.debug("lastid : {0} => {1}".format(lastid, name.strip()))
+                        #mpd.addtagid(lastid, "title", name.strip())
+                        num += 1
+
+
+        mpd.random(0)
+        mpd.consume(0)
+        mpd.repeat(0)
+
+        return lastPos
+    
+    def extractUrls(self, m3u):
+        response = urllib2.urlopen(m3u)
+        html = response.read()
+
+        resp = []
+
+        prec = ''
+        for url in html.splitlines(True):
+            if url.startswith('http') and prec != url:
+                print 'line : {0}'.format(url)
+                resp.append(url)
+                prec = url
+
+        return resp
+    
     def choixRadio(self, numRadio):
         logging.debug('numRadio : {0}'.format(numRadio))
         try:
@@ -64,43 +117,44 @@ class RadioControler(MenuControler):
             logging.error(str(e))
         
 
-    # Load radio stations
-    def loadStations(self, mpd, playlistsDir):
-        logging.debug('RadioControler..loadStations')
-        mpd.clear()
-
-        dirList = os.listdir(playlistsDir)
-        for fname in dirList:
-            # cmd = "load \"" + fname.strip("\n") + "\""
-
-            fname = fname.strip("\n")
-            try:
-                mpd.load(fname)
-            except:
-                logging.error('Failed to load playlist {0}/{1}'.format(playlistsDir, fname))
-
-        mpd.random(0)
-        mpd.consume(0)
-        mpd.repeat(0)
-
-    # Create list of tracks or stations
-    def createPlayList(self, mpdService):
-        logging.debug('RadioControler..createPlayList')
-        self.playlist = []
-        num = 0
-        line = ""
-        pls = mpdService.getPlaylistInfo()
-        for st in pls:
-            line = ''
-            try:
-                line = st['name']
-            except:
-                line = st['title']
-            if line.__len__() < 1:
-                break
-            # line = translate.escape(line)
-            self.playlist.append((line, self.choixRadio, num))
-            num = num + 1
+#     # Load radio stations
+#     def loadStations(self, mpd, playlistName):
+#         logging.debug('RadioControler..loadStations')
+#         mpd.clear()
+# 
+#         try:
+#             mpd.load(playlistName)
+#         except:
+#             logging.error('Failed to load playlist {0}'.format(playlistName))
+# 
+#         mpd.random(0)
+#         mpd.consume(0)
+#         mpd.repeat(0)
+# 
+#     # Create list of tracks or stations
+#     def createPlayList(self, mpdService):
+#         logging.debug('RadioControler..createPlayList')
+#         self.playlist = []
+#         num = 0
+#         line = ""
+#         pls = mpdService.getPlaylistInfo()
+#         for st in pls:
+#             logging.debug('In : {0}'.format(st))
+#             line = ''
+#             try:
+#                 line = st['name']
+#             except:
+#                 try :
+#                     line = st['title']
+#                 except:
+#                     line = st['file']
+#             if line.__len__() < 1:
+#                 break
+#             # line = translate.escape(line)
+#             self.playlist.append((line, self.choixRadio, num))
+#             num = num + 1
+# 
+#         logging.debug('Playlist => {0}'.format(self.playlist))
 
     def stop(self):
         pass

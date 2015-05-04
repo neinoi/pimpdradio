@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # $Id: log_class.py,v 1.6 2014/03/25 19:42:00 bob Exp $
 # Raspberry Pi Internet Radio

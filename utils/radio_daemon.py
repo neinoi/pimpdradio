@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Raspberry Pi Internet Radio Class
 # $Id: radio_daemon.py,v 1.3 2014/06/08 10:08:07 bob Exp $

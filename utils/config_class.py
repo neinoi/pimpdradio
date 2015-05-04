@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Created on 6 janv. 2015
 
@@ -54,8 +56,11 @@ class Config(object):
     def getLcdWidth(self):
         return self.config.getint("LCD", "WIDTH")
 
-    def getPlaylistsDir(self):
-        return self.config.get("FILES", "PLAYLISTS")
+    def getPlaylistName(self):
+        return self.config.get("FILES", "PLAYLIST")
+    
+    def getRadiolistFile(self):
+        return self.config.get("FILES", "RADIOS")
     
     def getLogFile(self):
         return self.config.get("LOG", "FILE")

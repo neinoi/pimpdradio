@@ -67,45 +67,36 @@ class MPDService(Thread):
     def execMpc(self, cmd, param = None):
         logging.debug('Command : {0}({1}'.format(cmd, param))
         
-        #self.noidle = True
-        #self.mpd.noidle()
-        
-        try:
-            if param is None:
-                ret = cmd()
-            else:
-                ret = cmd(param)
-        except socket.error, e:
-            if isinstance(e.args, tuple):
-                logging.warning('errno is {0}'.format(e[0]))
-                if e[0] == errno.EPIPE:
-                    # remote peer disconnected
-                    logging.warning("Detected remote disconnect")
+        retry = 2
+        ret = None
+        while retry > 0:
+            retry -= 1
+            try:
+                if param is None:
+                    ret = cmd()
                 else:
-                    # determine and handle different error
-                    pass
-            else:
-                print "socket error ", e
-            time.sleep(0.5)
-            self.reconnect()
-            ret = self.execMpc(cmd, param)
-        except Exception as e:
-            logging.error("Error : {0}".format(e))
-            time.sleep(0.5)
-            self.reconnect()
-            ret = self.execMpc(cmd, param)
-        #else:
-            #self.noidle = False
-
-        #self.noidle = False
+                    ret = cmd(param)
+            except socket.error, e:
+                if isinstance(e.args, tuple):
+                    logging.warning('errno is {0}'.format(e[0]))
+                    if e[0] == errno.EPIPE:
+                        # remote peer disconnected
+                        logging.warning("Detected remote disconnect")
+                    else:
+                        # determine and handle different error
+                        pass
+                else:
+                    print "socket error ", e
+                time.sleep(0.5)
+                self.reconnect()
+                #ret = self.execMpc(cmd, param)
+            except Exception as e:
+                logging.error("Error : {0}".format(e))
+                time.sleep(0.5)
+                self.reconnect()
+                #ret = self.execMpc(cmd, param)
 
         return ret
-
-#         try:
-
-#         except IOError, e:
-#             # Hmmm, Can IOError actually be raised by the socket module?
-#             logging.warning('Got IOError: {0}'.format(e))
 
 
     def reconnect(self):
