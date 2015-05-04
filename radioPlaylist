@@ -1,0 +1,24 @@
+# Some sites that you can use are:
+#   http://www.listenlive.eu  (Mainly used below)
+#   http://www.internet-radio.com  
+#   http://www.radio-locator.com
+#   http://bbcstreams.com/ 
+ 
+FIP Nantes = http://mp3lg4.tdf-cdn.com/6834/fipnantes-hd.mp3
+Le Mouv' = http://www.tv-radio.com/station/le_mouv_mp3/le_mouv_mp3-128k.m3u
+France Bleu LO = http://mp3lg4.tdf-cdn.com/6866/fbloireocean-hd.mp3
+SUN = http://www.lesonunique.com/sun.m3u
+Urban Hits = http://broadcast.infomaniak.ch/onlyrai-high.mp3.m3u
+NTI = http://www.radionti.com/pages_live/nti-mp3-128k.m3u
+RTL = http://streaming.radio.rtl.fr/rtl-1-44-96
+Europe 1 = http://mp3lg4.tdf-cdn.com/9240/lag_180945.mp3
+RMC = http://mp3lg4.tdf-cdn.com/10160/rmc.mp3
+France culture = http://www.tv-radio.com/station/france_culture_mp3/france_culture_mp3-128k.m3u
+France musique = http://www.tv-radio.com/station/france_musique_mp3/france_musique_mp3-128k.m3u
+#(Noël)
+#La radio de Noel = http://live2.jupinfo.fr:8000/radiodenoel
+#Christmas Jazz = http://relay5.181.fm:8092
+#(Jazz)
+Jazz 24 = http://icy1.abacast.com/kplu-jazz24aac-64.m3u
+#(Musicales)
+La grosse radio - Rock = http://hd.lagrosseradio.info:8500
