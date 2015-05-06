@@ -25,7 +25,7 @@ class RadioControler(MenuControler):
     '''
     playlist = []
 
-    def __init__(self, config, lcd, mpdService, rootControler):
+    def __init__(self, config, lcd, mpdService, rootControler, previousControler):
         # Test si une radio est en cours de lecture …
         radioEncours = False
         mpdFile = ''
@@ -46,13 +46,15 @@ class RadioControler(MenuControler):
         logging.debug('lastpos : {0}'.format(lastPos))
         
         MenuControler.__init__(
-            self, config, lcd, mpdService, rootControler, self.playlist)
+            self, config, lcd, mpdService, rootControler, previousControler, self.playlist)
 
         if radioEncours and lastPos > 0:
             threading.Timer(0.1, self.choixRadio, [lastPos]).start()
         
     def loadRadiolist(self, mpd, radioListFile, lastRadio):
         logging.debug('RadioControler..loadRadiolist')
+        
+        addid = ('addid' in mpd.commands())
 
         mpd.clear()
         self.playlist = []
@@ -67,21 +69,27 @@ class RadioControler(MenuControler):
                     logging.debug('load : [{0}] {1}'.format(name.strip(), url.strip()))
 
                     self.playlist.append((name.strip(), self.choixRadio, num))
-                    if url.strip() == lastRadio:
-                        lastPos = num
 
                     if url.strip().endswith('.m3u'):
                         #playlist
                         #Chargement de toutes les urls …
 
                         for s in self.extractUrls(url):
+                            if s.strip() == lastRadio.strip():
+                                lastPos = num
+
                             logging.debug('loading <{0}>'.format(s))
-                            mpd.addid(s.strip(), num)
+                            lastid = mpd.addid(s.strip(), num)
+                            if addid:
+                                mpd.addtagid(lastid, "title", name.strip())
                             num += 1
                     else:
+                        if url.strip() == lastRadio.strip():
+                            lastPos = num
                         lastid = mpd.addid(url.strip(), num)
                         logging.debug("lastid : {0} => {1}".format(lastid, name.strip()))
-                        #mpd.addtagid(lastid, "title", name.strip())
+                        if addid:
+                            mpd.addtagid(lastid, "title", name.strip())
                         num += 1
 
 
@@ -100,7 +108,7 @@ class RadioControler(MenuControler):
         prec = ''
         for url in html.splitlines(True):
             if url.startswith('http') and prec != url:
-                print 'line : {0}'.format(url)
+                logging.debug('line : {0}'.format(url))
                 resp.append(url)
                 prec = url
 
@@ -115,46 +123,6 @@ class RadioControler(MenuControler):
                              self.mpdService, self.rootControler, self))
         except Exception as e:
             logging.error(str(e))
-        
-
-#     # Load radio stations
-#     def loadStations(self, mpd, playlistName):
-#         logging.debug('RadioControler..loadStations')
-#         mpd.clear()
-# 
-#         try:
-#             mpd.load(playlistName)
-#         except:
-#             logging.error('Failed to load playlist {0}'.format(playlistName))
-# 
-#         mpd.random(0)
-#         mpd.consume(0)
-#         mpd.repeat(0)
-# 
-#     # Create list of tracks or stations
-#     def createPlayList(self, mpdService):
-#         logging.debug('RadioControler..createPlayList')
-#         self.playlist = []
-#         num = 0
-#         line = ""
-#         pls = mpdService.getPlaylistInfo()
-#         for st in pls:
-#             logging.debug('In : {0}'.format(st))
-#             line = ''
-#             try:
-#                 line = st['name']
-#             except:
-#                 try :
-#                     line = st['title']
-#                 except:
-#                     line = st['file']
-#             if line.__len__() < 1:
-#                 break
-#             # line = translate.escape(line)
-#             self.playlist.append((line, self.choixRadio, num))
-#             num = num + 1
-# 
-#         logging.debug('Playlist => {0}'.format(self.playlist))
 
     def stop(self):
         pass

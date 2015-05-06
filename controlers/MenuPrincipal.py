@@ -11,6 +11,7 @@ import time
 
 from menucontroler_base import MenuControler
 from RadioControler import RadioControler
+from MusicControler import MusicControler
 from SystemMenu import SystemMenu
 
 CHOIX_RADIO = 1
@@ -31,19 +32,21 @@ class MenuPrincipal(MenuControler):
                    ("Music", self.choix, CHOIX_MUSIC),
                    ("System", self.choix, CHOIX_SYSTEM)]
 
-        MenuControler.__init__(self, config, lcd, mpdService, rootControler, options)
+        MenuControler.__init__(self, config, lcd, mpdService, rootControler, None, options)
 
     def choix(self, choix):
         if choix == CHOIX_RADIO:
             self.rootControler.setControler(
                 RadioControler(self.config, self.lcd, self.mpdService,
-                               self.rootControler))
+                               self.rootControler, self))
         elif choix == CHOIX_MUSIC:
-            print "TODO"
+            self.rootControler.setControler(
+                MusicControler(self.config, self.lcd, self.mpdService,
+                               self.rootControler, self))
         elif choix == CHOIX_SYSTEM:
             self.rootControler.setControler(
                 SystemMenu(self.config, self.lcd, self.mpdService,
-                           self.rootControler))
+                           self.rootControler, self))
 
     def testStatus(self, retry=True):
         logging.debug('startupSong : {0}'.format(self.rootControler.startupSong))

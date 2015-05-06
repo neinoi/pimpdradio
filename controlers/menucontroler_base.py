@@ -10,24 +10,28 @@ Created on 1 janv. 2015
 import logging
 from controler_base import Controler
 
-
 class MenuControler(Controler):
 
     '''
     classdocs
     '''
     selected = -1
+    current = 0
 
     # Tableau de tuples (ligne à afficher,fonction à lancer,paramètres)
     options = []
 
-    def __init__(self, config, lcd, mpdService, rootControler, options):
-        Controler.__init__(self, config, lcd, mpdService, rootControler)
+    def __init__(self, config, lcd, mpdService, rootControler, previousControler, options):
+        Controler.__init__(self, config, lcd, mpdService, rootControler, previousControler)
+        self.setOptions(options)
+
+    def setOptions(self, options):
         self.options = options
         self.current = 0
 
         self.lcd.clear()
         self._affOptions()
+        
 
     def _affOptions(self):
         first = self.current - 1
@@ -83,7 +87,9 @@ class MenuControler(Controler):
         self.options[self.current][1](self.options[self.current][2])
 
     def volumeClickUp(self):
+        logging.debug(" * CLICK ... ")
         if self.previousControler is not None:
+            logging.debug(" * CLICK ... ")
             self.rootControler.setControler(self.previousControler)
 
     def refresh(self):

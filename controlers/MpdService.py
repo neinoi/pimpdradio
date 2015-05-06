@@ -64,18 +64,18 @@ class MPDService(Thread):
         self.Terminated = True        
         
     # Execute MPC command using mpd library - Connect client if required
-    def execMpc(self, cmd, param = None):
-        logging.debug('Command : {0}({1}'.format(cmd, param))
+    def execMpc(self, cmd, *params):
+        logging.debug('Command : {0}({1}'.format(cmd, params))
         
         retry = 2
         ret = None
         while retry > 0:
             retry -= 1
             try:
-                if param is None:
+                if len(params) == 0:
                     ret = cmd()
                 else:
-                    ret = cmd(param)
+                    ret = cmd(*params)
             except socket.error, e:
                 if isinstance(e.args, tuple):
                     logging.warning('errno is {0}'.format(e[0]))
@@ -161,16 +161,29 @@ class MPDService(Thread):
     def getPlaylistInfo(self):
         logging.debug('-')
         return self.playlistInfo
+    
+    def getList(self,search):
+        logging.debug('-')
+
+        return self.execMpc(self.mpdCommands.list, search)
 
     def pauseRestart(self):
-        logging.debug('-')
+        logging.debug('MpdService - pauseRestart')
         
         if self.getStatus('state') == 'play':
             self.plId = int(self.getCurrentSong('id'))            
-            self.execMpc(self.mpdCommands.pause)
+            try:
+                self.mpdCommands.pause()
+            except:
+                pass
         elif self.plId is not None:
             self.execMpc(self.mpdCommands.playid, self.plId)
             self.plId = None
+        else:
+            try:
+                self.mpdCommands.pause()
+            except:
+                pass
         
     def changeVolume(self, increment):
         logging.debug('-')
@@ -203,6 +216,12 @@ class MPDService(Thread):
         logging.debug('playid({0})'.format(plid))
 
         self.execMpc(self.mpdCommands.playid, plid)        
+
+    def playFile(self, file):
+        logging.debug('-')
+
+        fid = self.execMpc(self.mpdCommands.addid, file)
+        self.execMpc(self.mpdCommands.playid, fid)
     
     def stopPlayer(self):
         logging.debug('-')

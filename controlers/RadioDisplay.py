@@ -40,6 +40,7 @@ class RadioDisplay(Controler):
         self.rootControler.setControler(self.previousControler)
 
     def volumeClickUp(self):
+        logging.debug('RadioDisplay..pauseRestart')
         self.mpdService.pauseRestart()
 
     def refresh(self):
