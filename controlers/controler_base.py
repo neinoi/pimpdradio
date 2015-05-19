@@ -69,10 +69,10 @@ class Controler():
         return self.currentVolume
 
     def volumeUp(self):
-        self.mpdService.changeVolume(5)
+        self.mpdService.changeVolume(1)
 
     def volumeDown(self):
-        self.mpdService.changeVolume(-5)
+        self.mpdService.changeVolume(-1)
 
     def volumeClickDown(self):
         logging.debug("volumeClickDown NotImplementedError")
