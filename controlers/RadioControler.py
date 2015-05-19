@@ -48,11 +48,12 @@ class RadioControler(MenuControler):
         MenuControler.__init__(
             self, config, lcd, mpdService, rootControler, previousControler, self.playlist)
 
-        if radioEncours and lastPos > 0:
+        if radioEncours and lastPos >= 0:
+            logging.info('Radio en cours, position : {0}'.format(lastPos))
             threading.Timer(0.1, self.choixRadio, [lastPos]).start()
         
     def loadRadiolist(self, mpd, radioListFile, lastRadio):
-        logging.debug('RadioControler..loadRadiolist')
+        logging.debug('lastRadio : {0}'.format(lastRadio))
         
         addid = ('addid' in mpd.commands())
 
@@ -75,19 +76,21 @@ class RadioControler(MenuControler):
                         #Chargement de toutes les urls …
 
                         for s in self.extractUrls(url):
+                            logging.debug('url : {0}'.format(s.strip()))
                             if s.strip() == lastRadio.strip():
+                                logging.debug('*** TROUVEE !!! ***')
                                 lastPos = num
 
-                            logging.debug('loading <{0}>'.format(s))
                             lastid = mpd.addid(s.strip(), num)
                             if addid:
                                 mpd.addtagid(lastid, "title", name.strip())
                             num += 1
                     else:
+                        logging.debug('url : {0}'.format(url.strip()))
                         if url.strip() == lastRadio.strip():
+                            logging.debug('*** TROUVEE !!! ***')
                             lastPos = num
                         lastid = mpd.addid(url.strip(), num)
-                        logging.debug("lastid : {0} => {1}".format(lastid, name.strip()))
                         if addid:
                             mpd.addtagid(lastid, "title", name.strip())
                         num += 1
