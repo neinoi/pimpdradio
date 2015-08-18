@@ -23,7 +23,7 @@ import threading
 import gaugette.rotary_encoder
 import gaugette.switch
 
-TEMPO = 0.15
+TEMPO = 0.3
 
 
 class RotaryEncoder(Encoder):

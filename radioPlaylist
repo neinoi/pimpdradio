@@ -4,9 +4,9 @@
 #   http://www.radio-locator.com
 #   http://bbcstreams.com/ 
  
-FIP Nantes = http://mp3lg4.tdf-cdn.com/6834/fipnantes-hd.mp3
-Le Mouv' = http://www.tv-radio.com/station/le_mouv_mp3/le_mouv_mp3-128k.m3u
-France Bleu LO = http://mp3lg4.tdf-cdn.com/6866/fbloireocean-hd.mp3
+FIP Nantes = http://audio.scdn.arkena.com/11344/fipnantes-midfi128.mp3
+Le Mouv' = http://audio.scdn.arkena.com/11014/mouv-midfi128.mp3
+France Bleu LO = http://audio.scdn.arkena.com/11381/fbloireocean-midfi128.mp3
 SUN = http://www.lesonunique.com/sun.m3u
 #Urban Hits = http://broadcast.infomaniak.ch/onlyrai-high.mp3.m3u
 Hit West = http://broadcast.infomaniak.ch/hitwest-high.mp3
@@ -14,8 +14,8 @@ NTI = http://www.radionti.com/pages_live/nti-mp3-128k.m3u
 RTL = http://streaming.radio.rtl.fr/rtl-1-44-96
 Europe 1 = http://mp3lg4.tdf-cdn.com/9240/lag_180945.mp3
 RMC = http://mp3lg4.tdf-cdn.com/10160/rmc.mp3
-France culture = http://www.tv-radio.com/station/france_culture_mp3/france_culture_mp3-128k.m3u
-France musique = http://www.tv-radio.com/station/france_musique_mp3/france_musique_mp3-128k.m3u
+France culture = http://audio.scdn.arkena.com/11010/franceculture-midfi128.mp3
+France musique = http://audio.scdn.arkena.com/11012/francemusique-midfi128.mp3
 France Inter = http://audio.scdn.arkena.com/11008/franceinter-midfi128.mp3
 #(Noël)
 #La radio de Noel = http://live2.jupinfo.fr:8000/radiodenoel

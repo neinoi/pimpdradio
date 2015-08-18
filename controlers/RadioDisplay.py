@@ -26,6 +26,7 @@ class RadioDisplay(Controler):
         logging.debug('RadioDisplay..__init__')
         Controler.__init__(self, config, lcd, mpdService, rootControler, previousControler)
 
+        self.radioFile = self.mpdService.getCurrentSong()['file']
         self.radioName = nomRadio
         self.l2 = nomRadio
 
@@ -59,7 +60,11 @@ class RadioDisplay(Controler):
                 self.l4 = ''
 
             try:
-                self.l2 = self.mpdService.getCurrentSong()['name']
+                cname = self.mpdService.getCurrentSong()['name']
+                if cname != 'unnamed':
+                    self.l2 = cname
+                else:
+                    self.l2 = self.radioName
             except Exception as e:
                 logging.info('RadioDisplay.refresh error : {0}'.format(str(e)))
 

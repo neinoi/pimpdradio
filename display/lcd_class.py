@@ -136,7 +136,7 @@ class Lcd(ScreenBase):
         self._byte_out(0x01, LCD_CMD)
         time.sleep(1)
 
-        self.timerRefresh = threading.Timer(5.0, self._refresh, [0.2])
+        self.timerRefresh = threading.Timer(5.0, self._refresh, [1.0])
         self.timerRefresh.start()
 
         self.timerLine1 = threading.Timer(5.0, self._refreshLine1, [60.0])

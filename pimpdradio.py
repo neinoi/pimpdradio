@@ -33,8 +33,8 @@ from utils.radio_daemon import Daemon
 from display.lcd_class import Lcd
 from utils.config_class import Config
 
-from encoders.gaugette_class import RotaryEncoder
-# from encoders.rotary_class import RotaryEncoder
+# from encoders.gaugette_class import RotaryEncoder
+from encoders.rotary_class import RotaryEncoder
 
 from maincontroler_class import MainControler
 from controlers.MpdService import MPDService
@@ -44,7 +44,7 @@ logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), fo
 
 mpdService = MPDService(config)
 
-tempo = 0.2
+tempo = 0.3
 lcd = Lcd(config, mpdService)
 
 logging.info('Initializing main controller ...')
@@ -56,14 +56,14 @@ tunerknob = RotaryEncoder(config.getSwitchMenuUp(),
                           config.getSwitchMenuDown(),
                           config.getSwitchMenuButton(),
                           controler.tuner_event)
-time.sleep(5)
+#time.sleep(5)
 
 logging.info('Initializing volume controls ...')
 volumeknob = RotaryEncoder(config.getSwitchVolumeUp(),
                            config.getSwitchVolumeDown(),
                            config.getSwitchVolumeButton(),
                            controler.volume_event)
-time.sleep(5)
+#time.sleep(5)
 controler.setReady(True)
 
 
