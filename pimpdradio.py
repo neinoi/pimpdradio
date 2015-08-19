@@ -34,7 +34,8 @@ from display.lcd_class import Lcd
 from utils.config_class import Config
 
 # from encoders.gaugette_class import RotaryEncoder
-from encoders.rotary_class import RotaryEncoder
+# from encoders.rotary_class import RotaryEncoder
+from encoders.simplerotary_class import RotaryEncoder
 
 from maincontroler_class import MainControler
 from controlers.MpdService import MPDService

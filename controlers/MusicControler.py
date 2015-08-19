@@ -35,21 +35,21 @@ class MusicControler(MenuControler):
 
     def loadList(self, tag):
         options = []
-        for g in self.mpdService.getList((tag)):
-            options.append((g, self.loadAlbums, (tag,g)))
+        for g in self.mpdService.getList(tag):
+            options.append((g, self.loadAlbums, ('album',tag,g)))
             
         self.changeOptions(options)
     
     def loadAlbums(self,search):
         options = []
-        for a in self.mpdService.getList(search):
-            options.append((a, self.loadAlbum, ('Album',a)+search))
+        for a in self.mpdService.getList(*search):
+            options.append((a, self.loadAlbum, a))
             
         self.changeOptions(options)
     
-    def loadAlbum(self,search):
+    def loadAlbum(self,albumName):
         options = []
-        for a in self.mpdService.loadAlbum(*search):
+        for a in self.mpdService.loadAlbum(albumName):
             options.append((a['track'] + ' ' + a['title'], self.playTitle, a['file']))
             
         self.changeOptions(options)

@@ -89,12 +89,10 @@ class MPDService(Thread):
                     print "socket error ", e
                 time.sleep(0.5)
                 self.reconnect()
-                #ret = self.execMpc(cmd, param)
             except Exception as e:
                 logging.error("Error : {0}".format(e))
                 time.sleep(0.5)
                 self.reconnect()
-                #ret = self.execMpc(cmd, param)
 
         return ret
 
@@ -162,10 +160,16 @@ class MPDService(Thread):
         logging.debug('-')
         return self.playlistInfo
     
-    def getList(self,search):
+    def getList(self, *search):
         logging.debug('-')
 
-        return self.execMpc(self.mpdCommands.list, search)
+        return self.execMpc(self.mpdCommands.list, *search)
+
+    def loadAlbum(self,albumName):
+        logging.debug('-')
+
+        return self.execMpc(self.mpdCommands.find, 'album', albumName)
+
 
     def pauseRestart(self):
         logging.debug('MpdService - pauseRestart')
