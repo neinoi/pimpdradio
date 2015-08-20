@@ -110,6 +110,7 @@ class Lcd(ScreenBase):
 
     timerRefresh = None
     timerLine1 = None
+    isRefreshing = False
 
     # Initialise for revision 2 boards
     def __init__(self, config, mpdService):
@@ -175,24 +176,28 @@ class Lcd(ScreenBase):
         if li != self.lcd_line1:
             self.lcd_line1 = li
             self.lcd_p1 = 0
+            self._refresh(None)
 
     def setLine2(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
         if li != self.lcd_line2:
             self.lcd_line2 = li
             self.lcd_p2 = 0
+            self._refresh(None)
 
     def setLine3(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
         if li != self.lcd_line3:
             self.lcd_line3 = li
             self.lcd_p3 = 0
+            self._refresh(None)
 
     def setLine4(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
         if li != self.lcd_line4:
             self.lcd_line4 = li
             self.lcd_p4 = 0
+            self._refresh(None)
 
     def _formatText(self, text, position):
         ret = text.strip(' ')
@@ -220,17 +225,21 @@ class Lcd(ScreenBase):
 
     def _refresh(self, tempo=0.5):
 
-        if self.lcd_p1 >= 0:
-            self.lcd_p1 = self._affLine(LCD_LINE_1, self.lcd_line1, self.lcd_p1)
-        if self.lcd_p2 >= 0:
-            self.lcd_p2 = self._affLine(LCD_LINE_2, self.lcd_line2, self.lcd_p2)
-        if self.lcd_p3 >= 0:
-            self.lcd_p3 = self._affLine(LCD_LINE_3, self.lcd_line3, self.lcd_p3)
-        if self.lcd_p4 >= 0:
-            self.lcd_p4 = self._affLine(LCD_LINE_4, self.lcd_line4, self.lcd_p4)
+        if not self.isRefreshing:
+            self.isRefreshing = True
+            if self.lcd_p1 >= 0:
+                self.lcd_p1 = self._affLine(LCD_LINE_1, self.lcd_line1, self.lcd_p1)
+            if self.lcd_p2 >= 0:
+                self.lcd_p2 = self._affLine(LCD_LINE_2, self.lcd_line2, self.lcd_p2)
+            if self.lcd_p3 >= 0:
+                self.lcd_p3 = self._affLine(LCD_LINE_3, self.lcd_line3, self.lcd_p3)
+            if self.lcd_p4 >= 0:
+                self.lcd_p4 = self._affLine(LCD_LINE_4, self.lcd_line4, self.lcd_p4)
+            self.isRefreshing = False
 
-        self.timerRefresh = threading.Timer(tempo, self._refresh, [tempo])
-        self.timerRefresh.start()
+        if tempo is not None:
+            self.timerRefresh = threading.Timer(tempo, self._refresh, [tempo])
+            self.timerRefresh.start()
 
         return
 
