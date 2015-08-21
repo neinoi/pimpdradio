@@ -54,7 +54,7 @@ class RotaryEncoder(Encoder):
         
         # Pour le bouton
         GPIO.add_event_detect(
-            self.button, GPIO.BOTH, callback=self.button_event, bouncetime=200)
+            self.button, GPIO.BOTH, callback=self.button_event, bouncetime=75)
         return
 
     # Call back routine called by switch events
