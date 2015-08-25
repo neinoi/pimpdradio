@@ -24,6 +24,9 @@ class MainControler(Controler):
     currentControler = None
     ready = False
     startupSong = None
+    
+    btVolumeDown = False
+    btTunerDown = False
 
     def __init__(self, config, lcd, mpdService):
         Controler.__init__(self, config, lcd, mpdService, None)
@@ -40,8 +43,12 @@ class MainControler(Controler):
             elif event == Encoder.ANTICLOCKWISE:
                 self.currentControler.tunerDown()
             elif event == Encoder.BUTTONUP:
+                self.btTunerDown = False
                 self.currentControler.tunerClickUp()
             elif event == Encoder.BUTTONDOWN:
+                self.btTunerDown = True
+                if self.btVolumeDown:
+                    self.execCommand("halt")
                 self.currentControler.tunerClickDown()
 
     # This is the callback routine to handle volume events
@@ -53,8 +60,12 @@ class MainControler(Controler):
             elif event == Encoder.ANTICLOCKWISE:
                 self.currentControler.volumeDown()
             elif event == Encoder.BUTTONUP:
+                self.btVolumeDown = False
                 self.currentControler.volumeClickUp()
             elif event == Encoder.BUTTONDOWN:
+                self.btVolumeDown = True
+                if self.btTunerDown:
+                    self.execCommand("halt")
                 self.currentControler.volumeClickDown()
 
     def setControler(self, newControler):
