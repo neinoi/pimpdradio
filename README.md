@@ -3,7 +3,7 @@ pimpdradio
 
 A raspberry pi Radio based on MPD
 
-Based on Bob Rathbone work : https://github.com/bobrathbone/piradio
+Initially based on Bob Rathbone work : https://github.com/bobrathbone/piradio
 
 Hardware :
  - Raspberry Pi B 512 Mo

@@ -34,6 +34,7 @@ class Controler():
 
     # Execute system command
     def execCommand(self, cmd):
+        logging.debug('Exec command {0}'.format(cmd))
         p = os.popen(cmd)
         return p.readline().rstrip('\n')
 

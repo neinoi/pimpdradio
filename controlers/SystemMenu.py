@@ -7,7 +7,7 @@ Created on 4 janv. 2015
 @author: julien
 '''
 from menucontroler_base import MenuControler
-
+from controlers.MessageDisplay import MessageDisplay
 
 class SystemMenu(MenuControler):
 
@@ -24,10 +24,12 @@ class SystemMenu(MenuControler):
                                rootControler, previousControler, 
                                self.defaultOptions)
 
-    def reboot(self):
+    def reboot(self, param):
+        self.rootControler.setControler(MessageDisplay("", "Redemarrage en cours", "", self.lcd))
         self.execCommand("reboot")
 
-    def shutdown(self):
+    def shutdown(self, param):
+        self.rootControler.setControler(MessageDisplay("", "Redemarrage en cours", "", self.lcd))
         self.execCommand("halt")
 
     def stop(self):

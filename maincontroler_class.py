@@ -17,7 +17,7 @@ import logging
 from controlers.controler_base import Controler
 from controlers.MenuPrincipal import MenuPrincipal
 from encoders.encoder_class import Encoder
-
+from controlers.MessageDisplay import MessageDisplay
 
 class MainControler(Controler):
 
@@ -48,8 +48,9 @@ class MainControler(Controler):
             elif event == Encoder.BUTTONDOWN:
                 self.btTunerDown = True
                 if self.btVolumeDown:
-                    self.execCommand("halt")
-                self.currentControler.tunerClickDown()
+                    self.shutdown()
+                else:
+                    self.currentControler.tunerClickDown()
 
     # This is the callback routine to handle volume events
     def volume_event(self, event):
@@ -65,8 +66,13 @@ class MainControler(Controler):
             elif event == Encoder.BUTTONDOWN:
                 self.btVolumeDown = True
                 if self.btTunerDown:
-                    self.execCommand("halt")
-                self.currentControler.volumeClickDown()
+                    self.shutdown()
+                else:
+                    self.currentControler.volumeClickDown()
+
+    def shutdown(self):
+        self.setControler(MessageDisplay("", "Arret en cours", "", self.lcd))
+        self.execCommand("halt")
 
     def setControler(self, newControler):
         logging.debug('MainControler..current : {0}'.format(self.currentControler))
