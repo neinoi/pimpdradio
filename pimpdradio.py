@@ -36,6 +36,7 @@ from encoders.simplerotary_class import RotaryEncoder
 
 from maincontroler_class import MainControler
 from controlers.MpdService import MPDService
+from controlers.MessageDisplay import MessageDisplay
 
 config = Config('/etc/pimpdradio.cfg')
 logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)s - %(message)s')
@@ -67,6 +68,8 @@ controler.setReady(True)
 
 @route('/hello/<name>')
 def index(name):
+    global controler, lcd
+    controler.setControler(MessageDisplay("", "Coucou {}".format(name), "", lcd))
     return template('<b>Hello {{name}}</b>!', name=name)
 
 run(host='0.0.0.0', port=8080)
