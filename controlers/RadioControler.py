@@ -62,39 +62,41 @@ class RadioControler(MenuControler):
         num = 0
         lastPos = -1
 
-        with open(radioListFile) as myfile:
-            for line in myfile:
-                line = line.strip()
-                if line[:1] != '#' and line != '':
-                    name, url = line.partition("=")[::2]
-                    logging.debug('load : [{0}] {1}'.format(name.strip(), url.strip()))
-
-                    self.playlist.append((name.strip(), self.choixRadio, num))
-
-                    if url.strip().endswith('.m3u'):
-                        #playlist
-                        #Chargement de toutes les urls …
-
-                        for s in self.extractUrls(url):
-                            logging.debug('url : {0}'.format(s.strip()))
-                            if s.strip() == lastRadio.strip():
+        try:
+            with open(radioListFile) as myfile:
+                for line in myfile:
+                    line = line.strip()
+                    if line[:1] != '#' and line != '':
+                        name, url = line.partition("=")[::2]
+                        logging.debug('load : [{0}] {1}'.format(name.strip(), url.strip()))
+    
+                        self.playlist.append((name.strip(), self.choixRadio, num))
+    
+                        if url.strip().endswith('.m3u'):
+                            #playlist
+                            #Chargement de toutes les urls …
+    
+                            for s in self.extractUrls(url):
+                                logging.debug('url : {0}'.format(s.strip()))
+                                if s.strip() == lastRadio.strip():
+                                    logging.debug('*** TROUVEE !!! ***')
+                                    lastPos = num
+    
+                                lastid = mpd.addid(s.strip(), num)
+                                if addid:
+                                    mpd.addtagid(lastid, "title", name.strip())
+                                num += 1
+                        else:
+                            logging.debug('url : {0}'.format(url.strip()))
+                            if url.strip() == lastRadio.strip():
                                 logging.debug('*** TROUVEE !!! ***')
                                 lastPos = num
-
-                            lastid = mpd.addid(s.strip(), num)
+                            lastid = mpd.addid(url.strip(), num)
                             if addid:
                                 mpd.addtagid(lastid, "title", name.strip())
                             num += 1
-                    else:
-                        logging.debug('url : {0}'.format(url.strip()))
-                        if url.strip() == lastRadio.strip():
-                            logging.debug('*** TROUVEE !!! ***')
-                            lastPos = num
-                        lastid = mpd.addid(url.strip(), num)
-                        if addid:
-                            mpd.addtagid(lastid, "title", name.strip())
-                        num += 1
-
+        except Exception as e:
+            logging.warning('init error : {0}'.format(str(e)))
 
         mpd.random(0)
         mpd.consume(0)

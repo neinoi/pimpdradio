@@ -21,15 +21,12 @@
 # however caused.
 #
 
-import os
-import RPi.GPIO as GPIO
-import signal
-import sys
 import time
 import logging
 
+from bottle import route, run, template
+
 # Class imports
-from utils.radio_daemon import Daemon
 from display.lcd_class import Lcd
 from utils.config_class import Config
 
@@ -68,103 +65,10 @@ volumeknob = RotaryEncoder(config.getSwitchVolumeUp(),
 controler.setReady(True)
 
 
-# Signal SIGTERM handler
-def signalHandler(signal, frame):
-    global log
-    pid = os.getpid()
-    log.message("Radio stopped, PID " + str(pid), log.INFO)
-    GPIO.cleanup()
-    sys.exit(0)
+@route('/hello/<name>')
+def index(name):
+    return template('<b>Hello {{name}}</b>!', name=name)
 
-
-# Daemon class
-class MyDaemon(Daemon):
-
-    def run(self):
-        signal.signal(signal.SIGTERM, signalHandler)
-
-        progcall = str(sys.argv)
-
-        while True:
-            time.sleep(1)
-
-    def status(self):
-        # Get the pid from the pidfile
-        try:
-            pf = file(self.pidfile, 'r')
-            pid = int(pf.read().strip())
-            pf.close()
-        except IOError:
-            pid = None
-
-        if not pid:
-            message = "radiod status: not running"
-            logging.info(message)
-        else:
-            message = "radiod running pid " + str(pid)
-            logging.info(message)
-        return
-
-# End of class overrides
-
-
-# def interrupt():
-#     global radio
-#     interrupt = False
-#     switch = radio.getSwitch()
-#     if switch > 0:
-#         interrupt = get_switch_states(lcd, radio, rss, volumeknob, tunerknob)
-#         radio.setSwitch(0)
-#
-# Rapid display of track play status
-#     if radio.getSource() == radio.PLAYER:
-#         if radio.volumeChanged():
-#             displayLine4(lcd, radio, "Volume " + str(radio.getVolume()))
-#             time.sleep(0.5)
-#         else:
-#             lcd.line4(radio.getProgress())
-#
-#     elif (radio.getTimer() and not interrupt) or radio.volumeChanged():
-#         displayLine4(lcd, radio, "Volume " + str(radio.getVolume()))
-#         interrupt = checkTimer(radio)
-#
-#     if not interrupt:
-#         interrupt = checkState(radio)
-#
-#     return interrupt
-
-
-def no_interrupt():
-    return False
-
-
-# Execute system command
-def exec_cmd(cmd):
-    p = os.popen(cmd)
-    result = p.readline().rstrip('\n')
-    return result
-
-
-# Main routine ###
-if __name__ == "__main__":
-    daemon = MyDaemon('/var/run/radiod.pid')
-    if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
-            daemon.start()
-        elif 'stop' == sys.argv[1]:
-            daemon.stop()
-        elif 'restart' == sys.argv[1]:
-            daemon.restart()
-        elif 'status' == sys.argv[1]:
-            daemon.status()
-        elif 'version' == sys.argv[1]:
-            print "Version 0.1"
-        else:
-            print "Unknown command: " + sys.argv[1]
-            sys.exit(2)
-        sys.exit(0)
-    else:
-        print "usage: %s start|stop|restart|status|version" % sys.argv[0]
-        sys.exit(2)
+run(host='0.0.0.0', port=8080)
 
 # End of script

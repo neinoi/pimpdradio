@@ -11,6 +11,7 @@ import logging
 import time
 import socket
 import errno
+import threading
 
 from threading import Thread 
 
@@ -34,6 +35,7 @@ class MPDService(Thread):
     status = None
     plId = None
     Terminated = False
+    timerWait = None
 
     def __init__(self, config):
         '''
@@ -55,11 +57,9 @@ class MPDService(Thread):
         logging.debug('init : status : {0}'.format(self.status))
             
     def run(self): 
-        while not self.Terminated:
-            self.waitForEvent()
-            time.sleep(0.1)
-        print "le thread " + self.nom + " s'est terminé proprement" 
-    
+        self.timerWait = threading.Timer(0.1, self.waitForEvent, [0.1])
+        self.timerWait.start()
+        
     def stop(self): 
         self.Terminated = True        
         
@@ -233,7 +233,7 @@ class MPDService(Thread):
         self.execMpc(self.mpdCommands.stop)
 
     
-    def waitForEvent(self):
+    def waitForEvent(self, tempo=0.1):
         #logging.debug('Noidle ? {0}'.format(self.noidle))
 
         #if not self.noidle:
@@ -260,6 +260,10 @@ class MPDService(Thread):
 
         except Exception as e:
             logging.error(e)
+          
+        self.timerWait = threading.Timer(tempo, self.waitForEvent, [tempo])
+        self.timerWait.start()
+
             
     def registerCallBackFor(self, event, callback):
         logging.debug('-')
