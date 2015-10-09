@@ -8,7 +8,7 @@ Created on 4 janv. 2015
 '''
 
 import logging
-from controler_base import Controler
+from controlers.controler_base import Controler
 from utils.constants import MPD_EVENT_PLAYER
 
 class RadioDisplay(Controler):

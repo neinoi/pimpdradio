@@ -31,7 +31,7 @@ import time
 from time import localtime, strftime
 
 import RPi.GPIO as GPIO
-from ScreenBase import ScreenBase
+from display.ScreenBase import ScreenBase
 from utils.constants import MPD_EVENT_MIXER, MPD_EVENT_PLAYER
 
 
@@ -147,29 +147,7 @@ class Lcd(ScreenBase):
         mpdService.registerCallBackFor(MPD_EVENT_PLAYER, self._refreshLine1)
 
         return
-
-    def refreshDisplay(self):
-        if self.mode == self.MODE_MENU:
-            # Ici on affiche le menu sur les 3 lignes du bas
-
-            # pos = self.menu_current -1
-            # if pos < 0:
-            #    pos = 0
-
-            # for i in range(2,4):
-
-            # if self.menu_current == 0:
-            #    self.setLine2(">> " + self.options[self.menu_current][0])
-            # else:
-            #    self.setLine2(">> " + self.options[self.menu_current -1][0])
-
-            # if len(self.options) > 2:
-            pass
-
-        elif self.mode == self.MODE_RADIO:
-            pass
-        elif self.mode == self.MODE_MUSIC:
-            pass
+    
 
     def setLine1(self, text, position=POSITION_LEFT):
         li = self._formatText(text, position)
@@ -200,7 +178,10 @@ class Lcd(ScreenBase):
             self._refresh(None)
 
     def _formatText(self, text, position):
-        ret = text.strip(' ')
+        if text is None:
+            ret = ""
+        else:
+            ret = text.strip(' ')
         if position == POSITION_CENTER:
             ret = ret.center(LCD_WIDTH, ' ')
         elif position == POSITION_RIGHT:
@@ -224,6 +205,11 @@ class Lcd(ScreenBase):
             self.timerLine1.start()
 
     def _refresh(self, tempo=0.5):
+
+#         logging.debug('Line1 : {0}'.format(self.lcd_line1))
+#         logging.debug('Line2 : {0}'.format(self.lcd_line2))
+#         logging.debug('Line3 : {0}'.format(self.lcd_line3))
+#         logging.debug('Line4 : {0}'.format(self.lcd_line4))
 
         if not self.isRefreshing:
             self.isRefreshing = True

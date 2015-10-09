@@ -6,7 +6,7 @@ Created on 6 janv. 2015
 @author: julien
 '''
 
-import ConfigParser
+import configparser
 
 
 class Config(object):
@@ -15,7 +15,7 @@ class Config(object):
     classdocs
     '''
 
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
 
     def __init__(self, configFile):
         self.config.read(configFile)

@@ -32,7 +32,6 @@ class MainControler(Controler):
         Controler.__init__(self, config, lcd, mpdService, None)
 
         self.setControler(MenuPrincipal(config, lcd, mpdService, self))
-        #lcd._refreshLine1()
 
     # This is the callback routine to handle tuner events
     def tuner_event(self, event):

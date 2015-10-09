@@ -40,16 +40,16 @@ config = Config('/etc/pimpdradio.cfg')
 logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)s - %(message)s')
 
 def tuner_event(event):
-    print 'event'
+    print ('event')
 
     if event == Encoder.CLOCKWISE:
-        print 'self.currentControler.tunerUp()'
+        print ('self.currentControler.tunerUp()')
     elif event == Encoder.ANTICLOCKWISE:
-        print 'self.currentControler.tunerDown()'
+        print ('self.currentControler.tunerDown()')
     elif event == Encoder.BUTTONUP:
-        print 'self.currentControler.tunerClickUp()'
+        print ('self.currentControler.tunerClickUp()')
     elif event == Encoder.BUTTONDOWN:
-        print 'self.currentControler.tunerClickDown()'
+        print ('self.currentControler.tunerClickDown()')
 
 tunerknob = RotaryEncoder(config.getSwitchMenuUp(),
                           config.getSwitchMenuDown(),

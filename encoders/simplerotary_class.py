@@ -17,7 +17,7 @@
 #             or damage however caused.
 #
 
-from encoder_class import Encoder
+from encoders.encoder_class import Encoder
 import RPi.GPIO as GPIO
 
 

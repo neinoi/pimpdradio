@@ -33,5 +33,3 @@ class ScreenBase():
         self.menu_current = current
         self.mode = MODE_MENU
 
-    def refreshDisplay(self):
-        raise NotImplementedError('refreshDisplay => TO BE IMPLEMENTED')

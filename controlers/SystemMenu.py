@@ -6,7 +6,7 @@ Created on 4 janv. 2015
 
 @author: julien
 '''
-from menucontroler_base import MenuControler
+from controlers.menucontroler_base import MenuControler
 from controlers.MessageDisplay import MessageDisplay
 
 class SystemMenu(MenuControler):

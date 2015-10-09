@@ -55,7 +55,7 @@ def execCommand(cmd):
 
 def createList():
     if not os.path.isfile(StationList):
-        print 'Creating ' + StationList + '\n'
+        print ('Creating ' + StationList + '\n')
         execCommand("mkdir -p " + RadioLibDir)
         print ("cp " + DistFile + ' ' + StationList)
         execCommand("cp " + DistFile + ' ' + StationList)
@@ -86,7 +86,7 @@ def createPlsFile(filename, output, nlines):
     exists = True
     while exists:
         if os.path.exists(outfile):
-            print "Warning: " + outfile + ' already exists'
+            print ("Warning: " + outfile + ' already exists')
             outfile = TempDir + filename + '[' + str(uniqueCount) + '].pls'
             uniqueCount += 1
             duplicateCount += 1
@@ -94,7 +94,7 @@ def createPlsFile(filename, output, nlines):
             exists = False
 
     try:
-        print 'Creating ' + outfile + '\n'
+        print ('Creating ' + outfile + '\n')
         outfile = open(outfile, 'w')
         outfile.writelines("[playlist]\n")
         outfile.writelines("NumberOfEntries=%s\n" % nlines)
@@ -105,7 +105,7 @@ def createPlsFile(filename, output, nlines):
 
         outfile.close()
     except:
-        print "Failed to create", outfile
+        print ("Failed to create", outfile)
     return
 
 # Beautify HTML convert tags to lower case
@@ -155,9 +155,9 @@ def parseAsx(title, url, data, filenumber):
 
     try:
         dom = parseString(lcdata)
-    except Exception, e:
-        print "Error:", e
-        print "Error: Could not parse XML data from,", url + '\n'
+    except Exception as e:
+        print ("Error:", e)
+        print ("Error: Could not parse XML data from,", url + '\n')
         errorCount += 1
         return
 
@@ -168,7 +168,7 @@ def parseAsx(title, url, data, filenumber):
             title = getParameter(titleTag)
 
     except:
-        print "Warning: Title not found in", url
+        print ("Warning: Title not found in", url)
         pass
 
     finally:
@@ -177,12 +177,12 @@ def parseAsx(title, url, data, filenumber):
             url = urlTag.replace('<ref href=\"', '').replace('\"/>', '')
             urls = url.split('?')
             url = urls[0]
-            print 'Title:', title
+            print ('Title:', title)
             plsfile = title.replace(' ', '_')
             output = createPlsOutput(title, url, filenumber)
-        except IndexError, e:
-            print "Error:", e
-            print "Error parsing", url
+        except IndexError as e:
+            print ("Error:", e)
+            print ("Error parsing", url)
             errorCount += 1
             return "# DOM Error"
 
@@ -232,7 +232,7 @@ def parseDirect(title, url, filenumber):
     url = url.replace('(stream)', '')
     if len(title) < 1:
         title = createTitle(url)
-    print "Title:", title
+    print ("Title:", title)
     output = createPlsOutput(title, url, filenumber)
     return output
 
@@ -260,7 +260,7 @@ def parsePls(title, url, lines, filenumber):
             title = createTitle(url)
             plsfile = createFileName(title, url)
 
-    print 'Title:', title
+    print ('Title:', title)
     plsfile = title.replace(' ', '_')
     output = createPlsOutput(title, plsurl, filenumber)
     return output
@@ -288,7 +288,7 @@ def parseM3u(title, lines, filenumber):
     else:
         filename = title.replace(' ', '_')
 
-    print 'Title:', title
+    print ('Title:', title)
     output.append('Title%s=%s' % (filenumber, title))
     output.append('File%s=%s' % (filenumber, url))
     output.append('Length%s=-1' % filenumber)
@@ -324,7 +324,7 @@ def format():
 # Start of MAIN script
 
 if os.getuid() != 0:
-    print "This program can only be run as root user or using sudo"
+    print ("This program can only be run as root user or using sudo")
     sys.exit(1)
 
 deleteOld = False
@@ -360,7 +360,7 @@ execCommand("mkdir -p " + TempDir)
 execCommand("rm -f " + TempDir + '*')
 
 # Open the list of URLs
-print "Creating PLS files from", StationList + '\n'
+print ("Creating PLS files from", StationList + '\n')
 
 lineCount = 0		# Line being processed (Including comments)
 errorCount = 0		# Errors
@@ -369,8 +369,8 @@ warningCount = 0  # Warnings
 processedCount = 0  # Processed station count
 
 # Copy user stream files to temporary directory
-print "Copying user PLS and M3U files from " + PlaylistsDir + " to " \
-    + TempDir + '\n'
+print ("Copying user PLS and M3U files from " + PlaylistsDir + " to " \
+    + TempDir + '\n')
 
 if os.listdir(PlaylistsDir):
     execCommand("cp -f " + PlaylistsDir + '* ' + TempDir)
@@ -409,7 +409,7 @@ for line in open(StationList, 'r'):
         if len(filename) > 0:
             writeFile = True
         else:
-            print "Playlist:", playlistname
+            print ("Playlist:", playlistname)
             filename = newplaylist
             filenumber = 1
             continue
@@ -461,7 +461,7 @@ for line in open(StationList, 'r'):
     url = lineparts[1].lstrip()
 
     # Get the published URL and determine its type
-    print 'Processing line ' + str(lineCount) + ': ' + url
+    print ('Processing line ' + str(lineCount) + ': ' + url)
 
     # Extended M3U (MPEG 3 URL) format
     if url.endswith('.m3u'):
@@ -492,7 +492,7 @@ for line in open(StationList, 'r'):
         data = file.read()
         file.close()
     except:
-        print "Error: Failed to retrieve ", url
+        print ("Error: Failed to retrieve ", url)
         errorCount += 1
         continue
 
@@ -509,7 +509,7 @@ for line in open(StationList, 'r'):
         if firstline.startswith('<ASX'):
             pls_output += parseAsx(title, url, lines, filenumber)
         else:
-            print url, "didn't return XML data"
+            print (url, "didn't return XML data")
             continue
 
     if len(filename) < 1:
@@ -545,28 +545,28 @@ if oldfiles > 0:
         execCommand("rm -f " + PlsDirectory + "*.pls")
         execCommand("rm -f " + PlsDirectory + "*.m3u")
     else:
-        print "Old playlist files not removed"
+        print ("Old playlist files not removed")
 
 copiedCount = len(os.listdir(TempDir))
-print "Copying %s new playlist files to directory %s" % (copiedCount,
-                                                         PlsDirectory)
+print ("Copying %s new playlist files to directory %s" % (copiedCount,
+                                                         PlsDirectory))
 execCommand("cp -f " + TempDir + '* ' + PlsDirectory)
 
 if os.path.isfile(PodcastsFile):
-    print "\nCreating Podcast playlists from " + PodcastsFile
+    print ("\nCreating Podcast playlists from " + PodcastsFile)
     execCommand(RadioDir + "create_podcasts.py")
 
 # Create summary report
-print "\nNew radio playlist files will be found in " + PlsDirectory
+print ("\nNew radio playlist files will be found in " + PlsDirectory)
 
 if errorCount > 0:
-    print str(errorCount) + " error(s)"
+    print (str(errorCount) + " error(s)")
 
 if duplicateCount > 0:
-    print str(duplicateCount) + " duplicate file name(s) found and renamed."
+    print (str(duplicateCount) + " duplicate file name(s) found and renamed.")
 
 warningCount += duplicateCount
 if warningCount > 0:
-    print str(warningCount) + " warning(s)"
+    print (str(warningCount) + " warning(s)")
 
 # End of script

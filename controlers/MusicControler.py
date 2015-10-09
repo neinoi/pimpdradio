@@ -7,9 +7,7 @@ Created on 4 janv. 2015
 @author: julien
 '''
 
-import logging
-
-from menucontroler_base import MenuControler
+from controlers.menucontroler_base import MenuControler
 
 class MusicControler(MenuControler):
 

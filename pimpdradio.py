@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Raspberry Pi Internet Radio
@@ -36,7 +36,8 @@ from encoders.simplerotary_class import RotaryEncoder
 
 from maincontroler_class import MainControler
 from controlers.MpdService import MPDService
-from controlers.MessageDisplay import MessageDisplay
+from controlers.MenuPrincipal import MenuPrincipal
+from controlers.BluetoothDisplay import BluetoothDisplay
 
 config = Config('/etc/pimpdradio.cfg')
 logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)s - %(message)s')
@@ -66,12 +67,18 @@ volumeknob = RotaryEncoder(config.getSwitchVolumeUp(),
 controler.setReady(True)
 
 
-@route('/hello/<name>')
-def index(name):
-    global controler, lcd
-    controler.setControler(MessageDisplay("", "Coucou {}".format(name), "", lcd))
-    return template('<b>Hello {{name}}</b>!', name=name)
+@route('/bluetooth/<action>')
+def index(action):
+    global controler, lcd, config, mpdService
+    
+    if action == "start":
+        controler.setControler(BluetoothDisplay(config, lcd, mpdService, controler))
+    elif action == "stop":
+        controler.setControler(MenuPrincipal(config, lcd, mpdService, controler))
+        controler.setReady(True)
+        
+    return template('<b>Bluetooth {{action}}</b>', action=action)
 
-run(host='0.0.0.0', port=8080)
+run(port=8888)
 
 # End of script

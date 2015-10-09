@@ -9,21 +9,19 @@ Created on 4 janv. 2015
 
 import logging
 import threading
-import urllib2
+import urllib3
 
-from menucontroler_base import MenuControler
-from RadioDisplay import RadioDisplay
+from controlers.menucontroler_base import MenuControler
+from controlers.RadioDisplay import RadioDisplay
+
 from mpd import MPDClient
 
 Mpc = "/usr/bin/mpc"    # Music Player Client
 
-
 class RadioControler(MenuControler):
 
-    '''
-    classdocs
-    '''
     playlist = []
+    http = urllib3.PoolManager()
 
     def __init__(self, config, lcd, mpdService, rootControler, previousControler):
         # Test si une radio est en cours de lecture …
@@ -105,9 +103,10 @@ class RadioControler(MenuControler):
         return lastPos
     
     def extractUrls(self, m3u):
-        response = urllib2.urlopen(m3u)
-        html = response.read()
 
+        r = self.http.request('GET', m3u)
+        html = r.data
+        
         resp = []
 
         prec = ''

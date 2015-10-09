@@ -76,7 +76,7 @@ class MPDService(Thread):
                     ret = cmd()
                 else:
                     ret = cmd(*params)
-            except socket.error, e:
+            except Exception as e:
                 if isinstance(e.args, tuple):
                     logging.warning('errno is {0}'.format(e[0]))
                     if e[0] == errno.EPIPE:
@@ -86,7 +86,7 @@ class MPDService(Thread):
                         # determine and handle different error
                         pass
                 else:
-                    print "socket error ", e
+                    print ("socket error : {0}".format(e))
                 time.sleep(0.5)
                 self.reconnect()
             except Exception as e:
