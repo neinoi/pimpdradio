@@ -76,19 +76,19 @@ class MPDService(Thread):
                     ret = cmd()
                 else:
                     ret = cmd(*params)
-            except Exception as e:
-                if isinstance(e.args, tuple):
-                    logging.warning('errno is {0}'.format(e[0]))
-                    if e[0] == errno.EPIPE:
-                        # remote peer disconnected
-                        logging.warning("Detected remote disconnect")
-                    else:
-                        # determine and handle different error
-                        pass
-                else:
-                    print ("socket error : {0}".format(e))
-                time.sleep(0.5)
-                self.reconnect()
+#             except Exception as e:
+#                 if isinstance(e.args, tuple):
+#                     logging.warning('errno is {0}'.format(e[0]))
+#                     if e[0] == errno.EPIPE:
+#                         # remote peer disconnected
+#                         logging.warning("Detected remote disconnect")
+#                     else:
+#                         # determine and handle different error
+#                         pass
+#                 else:
+#                     print ("socket error : {0}".format(e))
+#                 time.sleep(0.5)
+#                 self.reconnect()
             except Exception as e:
                 logging.error("Error : {0}".format(e))
                 time.sleep(0.5)
