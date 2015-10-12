@@ -34,9 +34,9 @@ Python dependencies :
  - ConfigParser
  - RPi.GPIO
  - python-mpd2
+ - requests
  
  System dependencies :
  - python3-gi (python3-gobject)
  - python3-dbus
  - python3-smbus
- - python3-urllib3
