@@ -36,6 +36,7 @@ class MPDService(Thread):
     plId = None
     Terminated = False
     timerWait = None
+    timerPing = None
 
     def __init__(self, config):
         '''
@@ -55,13 +56,28 @@ class MPDService(Thread):
         logging.debug('init : currentSong : {0}'.format(self.currentSong))
         logging.debug('init : playlistInfo : {0}'.format(self.playlistInfo))
         logging.debug('init : status : {0}'.format(self.status))
+
+        self.timerPing = threading.Timer(15, self.ping, [15])
+        self.timerPing.start()
             
     def run(self): 
         self.timerWait = threading.Timer(0.1, self.waitForEvent, [0.1])
         self.timerWait.start()
         
     def stop(self): 
-        self.Terminated = True        
+        self.Terminated = True   
+        
+    def ping(self, tempo=15):
+        try:
+            self.mpdCommands.ping()
+        except Exception as e:
+            logging.error("Error : {0}".format(e))
+            time.sleep(0.5)
+            self.reconnect()
+            
+        self.timerPing = threading.Timer(15, self.ping, [15])
+        self.timerPing.start()
+        
         
     # Execute MPC command using mpd library - Connect client if required
     def execMpc(self, cmd, *params):
@@ -118,7 +134,7 @@ class MPDService(Thread):
         while retry > 0:
             mpdCli = MPDClient()    # Create the MPD client
             try:               
-                mpdCli.timeout = 10 
+                mpdCli.timeout = 60
                 mpdCli.idletimeout = None
                 mpdCli.connect(self.config.getMpdHost(), self.config.getMpdPort())
 
