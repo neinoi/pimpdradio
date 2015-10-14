@@ -7,7 +7,7 @@ Created on 4 janv. 2015
 @author: julien
 '''
 from controlers.menucontroler_base import MenuControler
-from controlers.MessageDisplay import MessageDisplay
+from controlers.MessageDisplay import MessageDisplay,ROTATING_DISPLAY
 
 class SystemMenu(MenuControler):
 
@@ -18,18 +18,18 @@ class SystemMenu(MenuControler):
 
     def __init__(self, config, lcd, mpdService, rootControler, previousControler):
 
-        self.defaultOptions = [("Reboot", self.reboot, None),
-                   ("Shutdown", self.shutdown, None)]
+        self.defaultOptions = [("Redémarrer", self.reboot, None),
+                   ("Arrêter", self.shutdown, None)]
         MenuControler.__init__(self, config, lcd, mpdService, 
                                rootControler, previousControler, 
                                self.defaultOptions)
 
     def reboot(self, param):
-        self.rootControler.setControler(MessageDisplay("", "Redemarrage en cours", "", self.lcd))
+        self.rootControler.setControler(MessageDisplay("", "Redémarrage en cours", ROTATING_DISPLAY, self.lcd))
         self.execCommand("reboot")
 
     def shutdown(self, param):
-        self.rootControler.setControler(MessageDisplay("", "Redemarrage en cours", "", self.lcd))
+        self.rootControler.setControler(MessageDisplay("", "Redémarrage en cours", ROTATING_DISPLAY, self.lcd))
         self.execCommand("halt")
 
     def stop(self):

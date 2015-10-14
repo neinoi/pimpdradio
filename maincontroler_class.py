@@ -17,7 +17,7 @@ import logging
 from controlers.controler_base import Controler
 from controlers.MenuPrincipal import MenuPrincipal
 from encoders.encoder_class import Encoder
-from controlers.MessageDisplay import MessageDisplay
+from controlers.MessageDisplay import MessageDisplay,ROTATING_DISPLAY
 
 class MainControler(Controler):
 
@@ -70,7 +70,7 @@ class MainControler(Controler):
                     self.currentControler.volumeClickDown()
 
     def shutdown(self):
-        self.setControler(MessageDisplay("", "Arret en cours", "", self.lcd))
+        self.setControler(MessageDisplay("", "Arret en cours", ROTATING_DISPLAY, self.lcd))
         self.execCommand("halt")
 
     def setControler(self, newControler):
