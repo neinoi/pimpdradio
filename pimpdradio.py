@@ -48,34 +48,37 @@ tempo = 0.3
 lcd = Lcd(config, mpdService)
 
 logging.info('Initializing main controller ...')
-controler = MainControler(config, lcd, mpdService)
+mainControler = MainControler(config, lcd, mpdService)
+bluetoothDisplay = BluetoothDisplay(config, lcd, mpdService, mainControler)
 time.sleep(5)
 
 logging.info('Initializing tuner controls ...')
 tunerknob = RotaryEncoder(config.getSwitchMenuUp(),
                           config.getSwitchMenuDown(),
                           config.getSwitchMenuButton(),
-                          controler.tuner_event)
-#time.sleep(5)
+                          mainControler.tuner_event)
 
 logging.info('Initializing volume controls ...')
 volumeknob = RotaryEncoder(config.getSwitchVolumeUp(),
                            config.getSwitchVolumeDown(),
                            config.getSwitchVolumeButton(),
-                           controler.volume_event)
-#time.sleep(5)
-controler.setReady(True)
+                           mainControler.volume_event)
 
+mainControler.setReady(True)
+
+previousControler = None
 
 @route('/bluetooth/<action>')
 def index(action):
-    global controler, lcd, config, mpdService
+    global mainControler, lcd, config, mpdService, previousControler, blueToothDisplay
     
     if action == "start":
-        controler.setControler(BluetoothDisplay(config, lcd, mpdService, controler))
+        previousControler = mainControler.currentControler
+        mainControler.setControler(blueToothDisplay)
+        mainControler.setReady(True)
     elif action == "stop":
-        controler.setControler(MenuPrincipal(config, lcd, mpdService, controler))
-        controler.setReady(True)
+        mainControler.setControler(previousControler)
+        mainControler.setReady(True)
         
     return template('<b>Bluetooth {{action}}</b>', action=action)
 
