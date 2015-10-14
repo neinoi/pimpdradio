@@ -10,18 +10,15 @@ Created on 4 janv. 2015
 # sudo apt-get install -y python3-gobject (python3-gi)
 # sudo apt-get install -y python3-smbus
 
-
+import datetime
 import logging
+import threading
 from controlers.controler_base import Controler
 
-
-import time
-import signal
-import dbus
+#import dbus
 import dbus.service
 import dbus.mainloop.glib
-import gi
-
+from gi.repository import GLib
 
 SERVICE_NAME = "org.bluez"
 AGENT_IFACE = SERVICE_NAME + '.Agent1'
@@ -54,9 +51,8 @@ class BluetoothDisplay(Controler, dbus.service.Object):
         logging.debug('BluetoothDisplay..__init__')
         Controler.__init__(self, config, lcd, mpdService, rootControler)
 
-        #gi.threads_init()
         dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-        
+
         """Initialize gobject and find any current media players"""
         self.bus = dbus.SystemBus()
 
@@ -80,28 +76,23 @@ class BluetoothDisplay(Controler, dbus.service.Object):
 
         self.findPlayer()
         self.refresh()
+
+        threading.Timer(0.1, self.start, []).start()
         
         
-        
+    def start(self):
+        GLib.threads_init()
+        loop = GLib.MainLoop()
         try:
-            mainloop = gi.MainLoop()
-            mainloop.run()
-        except KeyboardInterrupt as ex:
-            logging.info("Bluetooth canceled by user")
-        except Exception as ex:
-            logging.error("How embarrassing. The following error occurred {}".format(ex))
-        finally:
-            if self.player:
-                self.shutdown()
-
-
-
-
+            loop.run()
+        except Exception as e:
+            loop.quit()
+            print (e)
+            self.stop()
         
 #     def volumeClickUp(self):
 #         logging.debug('BluetoothDisplay..pauseRestart')
 #         self.mpdService.pauseRestart()
-
 
     def findPlayer(self):
         """Find any current media players and associated device"""
@@ -110,7 +101,7 @@ class BluetoothDisplay(Controler, dbus.service.Object):
 
         player_path = None
         transport_path = None
-        for path, interfaces in objects.iteritems():
+        for path, interfaces in objects.items():
             if PLAYER_IFACE in interfaces:
                 player_path = path
             if TRANSPORT_IFACE in interfaces:
@@ -159,7 +150,7 @@ class BluetoothDisplay(Controler, dbus.service.Object):
     def findAdapter(self):
         objects = self.getManagedObjects();
         bus = dbus.SystemBus()
-        for path, ifaces in objects.iteritems():
+        for path, ifaces in objects.items():
             adapter = ifaces.get(ADAPTER_IFACE)
             if adapter is None:
                 continue
@@ -167,12 +158,12 @@ class BluetoothDisplay(Controler, dbus.service.Object):
             return dbus.Interface(obj, ADAPTER_IFACE)
         raise Exception("Bluetooth adapter not found")
 
+
     """Utility functions from bluezutils.py"""
     def getManagedObjects(self):
         bus = dbus.SystemBus()
         manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
         return manager.GetManagedObjects()
-
 
 # SUITE ???
     def adapterHandler(self, interface, changed, invalidated, path):
@@ -214,14 +205,11 @@ class BluetoothDisplay(Controler, dbus.service.Object):
 
     def refresh(self):
         if not self.continueDisplay:
-            return 
+            return
 
         logging.debug("Updating display for connected: [{}]; state: [{}]; status: [{}]; discoverable [{}]".format(self.connected, self.state, self.status, self.discoverable))
 
-        print ("TRACK ===> ")
-        print (self.track)
-        print (" <=== TRACK")
-
+        lines = []
         self.l2 = " "
         self.l3 = " "
         self.l4 = " "
@@ -234,23 +222,49 @@ class BluetoothDisplay(Controler, dbus.service.Object):
                     self.l3 = "En pause"
                 else:
                     """Display track info """
-                    if "Artist" in self.track:
-                        self.l2 = " {0}".format(self.track["Artist"])
-                        if self.track["Title"]:
-                            self.l3 = " {0}".format(self.track["Title"])
-                    elif "Title" in self.track:
-                        self.l3 = " {0}".format(self.track["Title"])
-            
-        logging.debug('Line2 : {0}'.format(self.l2))
-        logging.debug('Line3 : {0}'.format(self.l3))
-        logging.debug('Line4 : {0}'.format(self.l4))
+                    artist = self.track["Artist"]
+                    album = self.track["Album"]
+                    title = self.track["Title"]
+
+                    trackNumber = self.track["TrackNumber"]
+                    numberOfTracks = self.track["NumberOfTracks"]
+
+                    #Unused
+                    #genre = self.track["Genre"]
+                    duration = self.formatDuration(self.track["Duration"])
+                    print ("Duration : {0}".format(duration))
+
+                    if artist.strip() != "":
+                        lines.append(artist)
+                    if album.strip() != "":
+                        lines.append(album)
+                    if title.strip() != "":
+                        lines.append(title)
+                    if trackNumber > 0 and numberOfTracks > 0:
+                        lines.append("{0} / {1} : {2}".format(trackNumber, numberOfTracks, duration))
+                    lines.append("Durée : {0}".format(duration))
+                  
+        if len(lines) >= 3:
+            self.l2 = lines[0]
+            self.l3 = lines[1]
+            self.l4 = lines[2]
+        if len(lines) == 2:
+            self.l3 = lines[0]
+            self.l4 = lines[1]
+        if len(lines) == 1:
+            self.l3 = lines[0]
         
         self.lcd.setLine2(self.l2, 'center')
         self.lcd.setLine3(self.l3, 'center')
         self.lcd.setLine4(self.l4, 'center')
-            
-        logging.debug('Fin')
+        
 
-     
-    def stop(self):        
+    def formatDuration(self, millis):
+        d = datetime.timedelta(milliseconds=millis)
+        
+        hours, remainder = divmod(d.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return "{0}h{1}m{2}s".format(hours, minutes, seconds)
+             
+    def stop(self):
         self.continueDisplay = False
