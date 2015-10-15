@@ -75,10 +75,13 @@ class BluetoothDisplay(Controler, dbus.service.Object):
                 path_keyword = "path")
 
         self.findPlayer()
-        self.refresh()
-
-        threading.Timer(0.1, self.start, []).start()
         
+        
+    def setReady(self, isReady):
+        if isReady:
+            self.refresh()    
+            threading.Timer(0.1, self.start, []).start()
+            
         
     def start(self):
         GLib.threads_init()
@@ -222,27 +225,42 @@ class BluetoothDisplay(Controler, dbus.service.Object):
                     self.l3 = "En pause"
                 else:
                     """Display track info """
-                    artist = self.track["Artist"]
-                    album = self.track["Album"]
-                    title = self.track["Title"]
+                    try:
+                        artist = self.track["Artist"]
+                        if artist.strip() != "":
+                            lines.append(artist)
+                    except Exception as e:
+                        logging.debug("No [Artist] found : {0}".format(e))
+                    
+                    try:
+                        album = self.track["Album"]
+                        if album.strip() != "":
+                            lines.append(album)
+                    except Exception as e:
+                        logging.debug("No [Album] found : {0}".format(e))
+                    
+                    try:
+                        title = self.track["Title"]
+                        if title.strip() != "":
+                            lines.append(title)
+                    except Exception as e:
+                        logging.debug("No [Title] found : {0}".format(e))
+                    
+                    try:
+                        trackNumber = self.track["TrackNumber"]
+                        numberOfTracks = self.track["NumberOfTracks"]
 
-                    trackNumber = self.track["TrackNumber"]
-                    numberOfTracks = self.track["NumberOfTracks"]
+                        duration = self.formatDuration(self.track["Duration"])
+                        
+                        
+                        if trackNumber > 0 and numberOfTracks > 0:
+                            lines.append("{0} / {1} : {2}".format(trackNumber, numberOfTracks, duration))
+                        lines.append("Durée : {0}".format(duration))
+                    except Exception as e:
+                        logging.debug("No [TrackNumber] or [NumberOfTracks] found : {0}".format(e))
 
                     #Unused
                     #genre = self.track["Genre"]
-                    duration = self.formatDuration(self.track["Duration"])
-                    print ("Duration : {0}".format(duration))
-
-                    if artist.strip() != "":
-                        lines.append(artist)
-                    if album.strip() != "":
-                        lines.append(album)
-                    if title.strip() != "":
-                        lines.append(title)
-                    if trackNumber > 0 and numberOfTracks > 0:
-                        lines.append("{0} / {1} : {2}".format(trackNumber, numberOfTracks, duration))
-                    lines.append("Durée : {0}".format(duration))
                   
         if len(lines) >= 3:
             self.l2 = lines[0]

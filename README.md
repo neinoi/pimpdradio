@@ -20,11 +20,10 @@ Software :
 Features :
  - Only 20x4 Lcd display
  - Radio information display
- - Bluetooth A2DP automatic connection 
+ - Bluetooth A2DP automatic connection and display
   
 Current :
  - Working with Mpd's database rather than file system (For huge collections)
- - Displaying music information from dbus when bluetooth is used
  
 Future : 
  - Working with color lcd display (like Adafruit's http://www.adafruit.com/products/1480)
@@ -36,7 +35,7 @@ Python dependencies :
  - python-mpd2
  - requests
  
- System dependencies :
+System dependencies :
  - python3-gi (python3-gobject)
  - python3-dbus
  - python3-smbus

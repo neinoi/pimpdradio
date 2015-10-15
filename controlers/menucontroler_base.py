@@ -92,6 +92,8 @@ class MenuControler(Controler):
             logging.debug(" * CLICK ... ")
             self.rootControler.setControler(self.previousControler)
 
+    def setReady(self, isReady):
+        self.refresh()
+
     def refresh(self):
-        # self.lcd.clear()
         self._affOptions()

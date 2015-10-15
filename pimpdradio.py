@@ -36,7 +36,6 @@ from encoders.simplerotary_class import RotaryEncoder
 
 from maincontroler_class import MainControler
 from controlers.MpdService import MPDService
-from controlers.MenuPrincipal import MenuPrincipal
 from controlers.BluetoothDisplay import BluetoothDisplay
 
 config = Config('/etc/pimpdradio.cfg')
@@ -70,11 +69,11 @@ previousControler = None
 
 @route('/bluetooth/<action>')
 def index(action):
-    global mainControler, lcd, config, mpdService, previousControler, blueToothDisplay
+    global mainControler, lcd, config, mpdService, previousControler, bluetoothDisplay
     
     if action == "start":
         previousControler = mainControler.currentControler
-        mainControler.setControler(blueToothDisplay)
+        mainControler.setControler(bluetoothDisplay)
         mainControler.setReady(True)
     elif action == "stop":
         mainControler.setControler(previousControler)

@@ -48,6 +48,10 @@ class MenuPrincipal(MenuControler):
                 SystemMenu(self.config, self.lcd, self.mpdService,
                            self.rootControler, self))
 
+    def setReady(self, isReady):
+        self.refresh()
+        self.testStatus()
+    
     def testStatus(self, retry=True):
         logging.debug('startupSong : {0}'.format(self.rootControler.startupSong))
         try:

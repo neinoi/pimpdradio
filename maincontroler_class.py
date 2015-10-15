@@ -90,7 +90,7 @@ class MainControler(Controler):
         logging.debug('Startup song : {0}'.format(self.startupSong))
 
         if isReady:
-            self.currentControler.testStatus()
+            self.currentControler.setReady(True)
             self.mpdService.run()
 
     def stop(self):

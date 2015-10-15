@@ -57,15 +57,19 @@ class MPDService(Thread):
         logging.debug('init : playlistInfo : {0}'.format(self.playlistInfo))
         logging.debug('init : status : {0}'.format(self.status))
 
-        self.timerPing = threading.Timer(15, self.ping, [15])
-        self.timerPing.start()
-            
     def run(self): 
-        self.timerWait = threading.Timer(0.1, self.waitForEvent, [0.1])
-        self.timerWait.start()
+        self.Terminated = False
+
+        if self.timerPing is None:
+            self.timerPing = threading.Timer(15, self.ping, [15])
+            self.timerPing.start()
+            
+        if self.timerWait is None:
+            self.timerWait = threading.Timer(0.1, self.waitForEvent, [0.1])
+            self.timerWait.start()
         
     def stop(self): 
-        self.Terminated = True   
+        self.Terminated = True
         
     def ping(self, tempo=15):
         try:
