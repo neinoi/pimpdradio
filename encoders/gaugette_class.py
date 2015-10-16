@@ -17,9 +17,9 @@
 #             or damage however caused.
 #
 
-from encoder_class import Encoder
-
 import threading
+
+from encoder_class import Encoder
 import gaugette.rotary_encoder
 import gaugette.switch
 

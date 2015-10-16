@@ -21,21 +21,21 @@
 # however caused.
 #
 
+import logging
 import os
-import RPi.GPIO as GPIO
 import signal
 import sys
 import time
-import logging
 
-# Class imports
+import RPi.GPIO as GPIO
+from encoders.encoder_class import Encoder
+from encoders.simplerotary_class import RotaryEncoder
 from utils.config_class import Config
 
-from encoders.encoder_class import Encoder
+
+# Class imports
 # from encoders.gaugette_class import RotaryEncoder
 # from encoders.rotary_class import RotaryEncoder
-from encoders.simplerotary_class import RotaryEncoder
-
 config = Config('/etc/pimpdradio.cfg')
 logging.basicConfig(filename=config.getLogFile(), level=config.getLogLevel(), format='%(asctime)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)s - %(message)s')
 
