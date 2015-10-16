@@ -78,6 +78,7 @@ class BluetoothDisplay(Controler, dbus.service.Object):
         
         
     def setReady(self, isReady):
+        self.continueDisplay = isReady
         if isReady:
             self.refresh()    
             threading.Timer(0.1, self.start, []).start()
@@ -209,7 +210,7 @@ class BluetoothDisplay(Controler, dbus.service.Object):
     def refresh(self):
         if not self.continueDisplay:
             return
-
+        
         logging.debug("Updating display for connected: [{}]; state: [{}]; status: [{}]; discoverable [{}]".format(self.connected, self.state, self.status, self.discoverable))
 
         lines = []

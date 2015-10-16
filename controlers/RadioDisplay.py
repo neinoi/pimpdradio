@@ -31,6 +31,7 @@ class RadioDisplay(Controler):
         self.l2 = nomRadio
 
         mpdService.registerCallBackFor(MPD_EVENT_PLAYER, self.refresh)
+        #self.mpdService.registerCallBackFor(MPD_EVENT_PLAYER, self.refresh)        
 
     def tunerClickDown(self):
         logging.debug('RadioDisplay..tunerClickDown')
@@ -92,9 +93,8 @@ class RadioDisplay(Controler):
      
     def setReady(self, isReady):
         self.continueDisplay = isReady
-        self.mpdService.registerCallBackFor(MPD_EVENT_PLAYER, self.refresh)        
         self.mpdService.run()
         self.refresh()
         
-    def stop(self):        
+    def stop(self):    
         self.continueDisplay = False

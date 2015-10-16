@@ -69,7 +69,7 @@ previousControler = None
 
 @route('/bluetooth/<action>')
 def index(action):
-    global mainControler, lcd, config, mpdService, previousControler, bluetoothDisplay
+    global mainControler, mpdService, previousControler, bluetoothDisplay
     
     if action == "start":
         previousControler = mainControler.currentControler
