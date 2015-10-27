@@ -71,6 +71,7 @@ class MainControler(Controler):
 
     def shutdown(self):
         self.setControler(MessageDisplay("", "Arret en cours", ROTATING_DISPLAY, self.lcd))
+        self.execCommand(self.config.getShutdownCommand())
         self.execCommand("halt")
 
     def setControler(self, newControler):
@@ -90,6 +91,7 @@ class MainControler(Controler):
         logging.debug('Startup song : {0}'.format(self.startupSong))
 
         if isReady:
+            self.execCommand(self.config.getStartupCommand())
             self.currentControler.setReady(True)
             self.mpdService.run()
 

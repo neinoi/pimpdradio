@@ -26,10 +26,12 @@ class SystemMenu(MenuControler):
 
     def reboot(self, param):
         self.rootControler.setControler(MessageDisplay("", "Redémarrage en cours", ROTATING_DISPLAY, self.lcd))
+        self.execCommand(self.config.getShutdownCommand())
         self.execCommand("reboot")
 
     def shutdown(self, param):
         self.rootControler.setControler(MessageDisplay("", "Redémarrage en cours", ROTATING_DISPLAY, self.lcd))
+        self.execCommand(self.config.getShutdownCommand())
         self.execCommand("halt")
 
     def stop(self):

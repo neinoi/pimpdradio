@@ -67,3 +67,9 @@ class Config(object):
 
     def getLogLevel(self):
         return self.config.getint("LOG", "LEVEL")
+
+    def getStartupCommand(self):
+        return self.config.get("COMMANDS", "STARTUP")
+    
+    def getShutdownCommand(self):
+        return self.config.get("COMMANDS", "SHUTDOWN")
