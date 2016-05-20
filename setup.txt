@@ -1,0 +1,15 @@
+With a working mpd on Raspbian Jessie :
+
+Debian packages :
+	python3
+	python3-pip
+	python3-dbus
+	
+pip3 packages :
+	bottle
+	RPi.GPIO
+	python-mpd2
+	
+
+ln -sf /home/pi/pimpdradio/pimpdradio.cfg /etc/pimpdradio.cfg
+ln -sf /home/pi/pimpdradio/radioPlaylist /etc/pimpdradio.list
