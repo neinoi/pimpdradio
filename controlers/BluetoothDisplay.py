@@ -51,31 +51,33 @@ class BluetoothDisplay(Controler, dbus.service.Object):
         logging.debug('BluetoothDisplay..__init__')
         Controler.__init__(self, config, lcd, mpdService, rootControler)
 
-        dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-
-        """Initialize gobject and find any current media players"""
-        self.bus = dbus.SystemBus()
-
-        dbus.service.Object.__init__(self, dbus.SystemBus(), self.AGENT_PATH)
-
-        self.bus.add_signal_receiver(self.playerHandler,
-                bus_name="org.bluez",
-                dbus_interface="org.freedesktop.DBus.Properties",
-                signal_name="PropertiesChanged",
-                path_keyword="path")
-
-        self.registerAgent()
-
-        adapter_path = self.findAdapter().object_path
-        self.bus.add_signal_receiver(self.adapterHandler,
-                bus_name = "org.bluez",
-                path = adapter_path,
-                dbus_interface = "org.freedesktop.DBus.Properties",
-                signal_name = "PropertiesChanged",
-                path_keyword = "path")
-
-        self.findPlayer()
-        
+        try:
+            dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+    
+            """Initialize gobject and find any current media players"""
+            self.bus = dbus.SystemBus()
+    
+            dbus.service.Object.__init__(self, dbus.SystemBus(), self.AGENT_PATH)
+    
+            self.bus.add_signal_receiver(self.playerHandler,
+                    bus_name="org.bluez",
+                    dbus_interface="org.freedesktop.DBus.Properties",
+                    signal_name="PropertiesChanged",
+                    path_keyword="path")
+    
+            self.registerAgent()
+    
+            adapter_path = self.findAdapter().object_path
+            self.bus.add_signal_receiver(self.adapterHandler,
+                    bus_name = "org.bluez",
+                    path = adapter_path,
+                    dbus_interface = "org.freedesktop.DBus.Properties",
+                    signal_name = "PropertiesChanged",
+                    path_keyword = "path")
+    
+            self.findPlayer()
+        except Exception as e:
+            logging.warning('init error : {0}'.format(str(e)))
         
     def setReady(self, isReady):
         self.continueDisplay = isReady
