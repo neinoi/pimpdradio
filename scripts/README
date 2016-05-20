@@ -1,7 +1,7 @@
 in root :
 
 make pimpdradio.py executable : chmod +x /home/pi/pimpdradio.py
-put link in /usr/sbin for startup : ln -s /home/pi/pimpdradio.py /usr/sbin/pimpdradio
+put link in /usr/sbin for startup : ln -s /home/pi/pimpdradio/pimpdradio.py /usr/sbin/pimpdradio
 
 copy pimpdradio in /etc/init.d
 make it executable : chmod +x /etc/init.d/pimpdradio
