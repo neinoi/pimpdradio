@@ -1,0 +1,63 @@
+Debian packages :
+	alsa-utils
+	bluez
+	bluez-tools
+	pulseaudio-module-bluetooth
+	python-gobject
+	python-gobject-2
+
+
+sudo usermod -a -G lp pi
+sudo usermod -a -G pulse-access,audio root
+sudo adduser pi pulse-access
+
+/etc/pulse/daemon.conf :
+	resample-method = trivial
+
+/etc/pulse/system.pa :
+***** ADDED *************************************
+.ifexists module-bluetooth-policy.so
+load-module module-bluetooth-policy
+.endif
+.ifexists module-bluetooth-discover.so
+load-module module-bluetooth-discover
+.endif
+.ifexists module-bluez5-device.so
+load-module module-bluez5-device
+.endif
+.ifexists module-bluez5-discover.so
+load-module module-bluez5-discover
+.endif
+*************************************************
+
+/etc/systemd/system/pulseaudio.service :
+*************************************************
+[Unit]
+Description=Pulse Audio
+[Service]
+Type=simple
+ExecStart=/usr/bin/pulseaudio --system --disallow-exit --disallow-module-loading --disable-shm --daemonize
+[Install]
+WantedBy=multi-user.target
+*************************************************
+
+# sudo systemctl daemon-reload
+# sudo systemctl enable pulseaudio.service
+# sudo systemctl start pulseaudio.service
+
+
+/etc/bluetooth/main.conf :
+*************************************************
+[General]
+Name = Minifi
+Class = 0x20041C
+*************************************************
+
+hciconfig -a => @MAC
+/var/lib/bluetooth/XX:XX:XX:XX:XX:XX/settings :
+*************************************************
+[General]
+Discoverable=true
+Alias=Minifi
+Class=0x20041C
+*************************************************

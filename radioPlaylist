@@ -24,3 +24,7 @@ France Inter = http://audio.scdn.arkena.com/11008/franceinter-midfi128.mp3
 Jazz 24 = http://icy1.abacast.com/kplu-jazz24aac-64.m3u
 #(Musicales)
 La grosse radio - Rock = http://hd.lagrosseradio.info:8500
+KIF Radio = http://91.121.59.45:10200/stream 
+KIF Cool = http://91.121.59.45:10213/stream
+KIF Rock = http://91.121.59.45:8005/stream
+KIF Hits = http://91.121.59.45:10214/stream

@@ -7,7 +7,10 @@ Created on 4 janv. 2015
 @author: julien
 '''
 
+import threading
+
 from controlers.menucontroler_base import MenuControler
+from controlers.Display import Display
 
 class MusicControler(MenuControler):
 
@@ -26,6 +29,14 @@ class MusicControler(MenuControler):
                                rootControler, previousControler, 
                                self.defaultOptions)
         
+        threading.Timer(0.1, self.displayLaunch, []).start()
+
+    def displayLaunch(self):
+        #On lit par défaut le premier morceau de la liste
+        self.mpdService.play(0)
+        self.rootControler.setControler(
+            Display('LECTURE !!!', self.config, self.lcd, 
+                    self.mpdService, self.rootControler, self))
 
     def changeOptions(self, options):
         self.root = False

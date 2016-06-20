@@ -12,7 +12,7 @@ import threading
 import requests
 
 from controlers.menucontroler_base import MenuControler
-from controlers.RadioDisplay import RadioDisplay
+from controlers.Display import Display
 
 from mpd import MPDClient
 
@@ -130,7 +130,7 @@ class RadioControler(MenuControler):
         try:
             self.mpdService.play(numRadio)
             self.rootControler.setControler(
-                RadioDisplay(self.playlist[numRadio][0], self.config, self.lcd,
+                Display(self.playlist[numRadio][0], self.config, self.lcd,
                              self.mpdService, self.rootControler, self))
         except Exception as e:
             logging.error(str(e))

@@ -57,7 +57,7 @@ class MenuPrincipal(MenuControler):
         try:
             mpdFile = self.rootControler.startupSong['file']
             logging.debug('mpdFile : {0}'.format(mpdFile))
-            if mpdFile[:7] == 'http://' or mpdFile[:8] == 'https://':
+            if mpdFile.startswith('http'):
                 self.choix(CHOIX_RADIO)
             else:
                 self.choix(CHOIX_MUSIC)
